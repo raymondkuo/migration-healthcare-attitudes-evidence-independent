@@ -1,0 +1,44 @@
+<!doctype html> <html lang="en"> <head> <base href="/eurostat/databrowser/"> <meta charset="utf-8"> <!-- For tester on VM--> <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> <!-- Ensure index.html is never cached by client t--> <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate"> <meta http-equiv="Pragma" content="no-cache"> <title ng-bind="pageTitle"></title> <meta name="description" content=""> <meta name="viewport" content="width=device-width,initial-scale=1"> <!--  favicon.ico and apple-touch-icon.png metatags --> <!-- These links are transformed in index.jsp to contains an absolute link, to resolve an issue with FF --> <meta name="theme-color" content="#034ea1"> <meta name="msapplication-square70x70logo" content="/eurostat/databrowser/images-no-filerev/favicon/mstile-70x70.png"> <meta name="msapplication-TileImage" content="/eurostat/databrowser/images-no-filerev/favicon/mstile-144x144.png"> <meta name="msapplication-TileColor" content="#034ea1"> <meta name="msapplication-square150x150logo" content="/eurostat/databrowser/images-no-filerev/favicon/mstile-150x150.png"> <meta name="msapplication-wide310x150logo" content="/eurostat/databrowser/images-no-filerev/favicon/mstile-310x150.png"> <link rel="apple-touch-icon" sizes="57x57" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-57x57.png"> <meta name="msapplication-square310x310logo" content="/eurostat/databrowser/images-no-filerev/favicon/mstile-310x310.png"> <link rel="icon" type="image/png" sizes="16x16" href="/eurostat/databrowser/images-no-filerev/favicon/favicon-16x16.png"> <link rel="icon" type="image/png" sizes="96x96" href="/eurostat/databrowser/images-no-filerev/favicon/favicon-96x96.png"> <link rel="apple-touch-icon" sizes="60x60" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-60x60.png"> <link rel="apple-touch-icon" sizes="114x114" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-114x114.png"> <link rel="shortcut icon" href="/eurostat/databrowser/images-no-filerev/favicon/favicon.ico" type="image/vnd.microsoft.icon"> <link rel="apple-touch-icon" sizes="120x120" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-120x120.png"> <link rel="apple-touch-icon" sizes="144x144" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-144x144.png"> <link rel="icon" type="image/png" sizes="192x192" href="/eurostat/databrowser/images-no-filerev/favicon/android-chrome-192x192.png"> <link rel="icon" type="image/png" sizes="32x32" href="/eurostat/databrowser/images-no-filerev/favicon/favicon-32x32.png"> <link rel="apple-touch-icon" sizes="180x180" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-180x180.png"> <link rel="apple-touch-icon" sizes="152x152" href="/eurostat/databrowser/images-no-filerev/favicon/apple-touch-icon-152x152.png"> <!-- following lines should prevent phone numbers to be converted into Skype links --> <meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE"> <meta name="format-detection" content="telephone=no"> <script type="text/javascript" src="/eurostat/databrowser/ruxitagentjs_ICANVfgqrux_10335260518104739.js" data-dtconfig="app=3f0a4a01865536ee|agentId=c62abd6fdb23d948|ssc=1|cssm=l|owasp=1|featureHash=ICANVfgqrux|rdnt=1|uxrgce=1|cuc=m097nmfl|mel=100000|mb=null|dpvc=1|iub=null|lastModification=1786772131174|tp=500,50,0|srbbv=2|agentUri=/eurostat/databrowser/ruxitagentjs_ICANVfgqrux_10335260518104739.js|reportUrl=/eurostat/databrowser/rb_39a3e95b-5423-482c-879b-99ef235dffeb|rid=RID_-577275889|rpid=-1293317847|domain=europa.eu"></script><link rel="stylesheet" href="styles/vendor.66b0ab4b.css"> 
+ <!-- ECL --> <!-- This line is used via grunt:serve to switch EC/EU style, removed from index.jsp -->  <!-- This lines are used by dist-ec to filerev necessary files, then only necessary line is loaded via index.jsp (see grunt/copy.js webindex task) --> 
+
+<link rel="stylesheet" href="styles/eui-ecl-eu.3697b365.css">
+
+ <link rel="stylesheet" href="styles/main.5d429034.css"> <link rel="stylesheet" href="styles/elements.d6f13ec2.css"> <!-- Preload font used in the table, a monospace font (or at least a font with tabular numbers) is used to ensures alignment across rows --> <!-- It is required to preload this font because it is required in the table,
+      and it was observed that style computation can occurs before this font is loaded
+      that would result in an erroneous computation --> <link rel="preload" as="font" href="assets/fonts/webfont/Roboto-Mono/RobotoMono-Regular.woff2" type="font/woff2" crossorigin="anonymous"> <link rel="preload" as="font" href="assets/fonts/webfont/Roboto-Mono/RobotoMono-Regular.woff" type="font/woff" crossorigin="anonymous"> <link rel="stylesheet" href="assets/fonts/webfont/Roboto-Mono/Roboto-Mono.css"> <!-- set language as lang-attribute, before cookie-consent is loaded, vanillaJS --> <script type="text/javascript"> function gQS(v) {
+      var p=window.location.search.substring(1).split('&');
+      for(var i=0;i<p.length;i++){var pp=p[i].split('=');if(v==pp[0].toLowerCase()){return pp[1];}}
+    }
+    function gLS(v) { // if not in Querystring, try to load language from localStorage
+      return window.localStorage.getItem(v);
+    }
+    var l = gQS('lang');
+    if (!l) l = gLS('databrowser.language-current');
+    if(l) document.getElementsByTagName('html')[0].setAttribute('lang',l); </script> <!-- --> <script type="application/json"> {
+      "utility" : "cck",
+      "url": {
+          "en": "https://ec.europa.eu/info/cookies_en",
+          "de": "https://ec.europa.eu/info/cookies_de",
+          "fr": "https://ec.europa.eu/info/cookies_fr"
+      },
+      "appendix": {
+          "en": "",
+          "de": "",
+          "fr": ""
+      },
+      "target": true
+    }</script> <!-- Webtool analytics snippet, this snippet is replaced in index.jsp by a variable of the plan.xml --> <script type="application/json">{
+				"utility" : "analytics",
+				"siteID" : 59,
+				"sitePath" : ["ec.europa.eu/eurostat"],
+				"siteSection" : "databrowser",
+				"mode" : "manual"
+			}</script> <!-- Webtools unified loader, this url is replaced in index.jsp by a variable of the plan.xml --> <script defer="defer" src="//webtools.europa.eu/load.js?globan=1110&theme=eu"></script> <!-- Webtools Cookie consent kit, this url is removed in index.jsp as it is not needed in ec.europa.eu environment -->  <!-- additional css, this url is replaced in index.jsp by a variable of the plan.xml --> <link href="stylesheet" src="assets/placeholder/css-override.css"> </head> <body id="body" ng-class="styleAdminView"> <span tabindex="-1" id="beforeQuickAccessNav"></span> <nav aria-label="{{'Quick Links' | translate}}" class="quick-access-nav" id="qwdw_quickAccessNav"> <ul> <li><a href="#main-title" translate>Skip to Content</a></li> </ul> </nav> <div id="globan-here"></div> <app-init-adapter></app-init-adapter> <!-- DISSCHAIN-20468 - stop md toast scroll to top  --> <div id="toast-container"></div> <div id="app-wrapper" class="contract" ng-if="configLoaded"> <div id="main" ng-style="::backgroundColor"> <header> <div class="estat-loading__container" id="loading-bar-spinner"></div> <site-header-adapter></site-header-adapter> <!-- DISSCHAIN-19559 - add this span to force the load of the font when preload not supported --> <span class="table-cell"></span> <canvas id="calculateCellWidth" style="position:absolute; left: -9999px;"></canvas> <canvas id="calculateCodeWidth" style="position:absolute; left: -9999px;"></canvas> </header> <!--[if lt IE 7]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]--> <div id="wrapper" class="ecl-container"> <!-- Main content --> <main id="main-content"> <div id="mainContent" ui-view=""></div> </main> </div> <!-- Use adapter in order to ensure loading of the app-config --> <site-footer-adapter></site-footer-adapter> </div> </div> <script src="scripts/check-browser-support.67dda659.js"></script> <script> if ("Internet Explorer" === woothee.parse(navigator.userAgent).name) {
+        window.location.href = '/eurostat/databrowser/not_supported.html';
+      };
+      if (false && window.matchMedia("(max-width: 909px)").matches) {
+        window.location.href = '/eurostat/databrowser/not_mobile_supported.html';
+      } </script> <script src="scripts/vendor.ccfdcf25.js"></script> <script src="scripts/elements.d2695341.js"></script> 
+ <script src="scripts/scripts.46c8acc9.js"></script> 

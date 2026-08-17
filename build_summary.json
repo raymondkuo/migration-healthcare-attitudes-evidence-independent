@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-08-17",
+  "input_workbook": "migration_population_panel_40countries_2010-2022_final.xlsx",
+  "input_workbook_sha256": "d00ab495fb8e7f720715916d5ba11faa7f169df94586d3b6ce646a9e6430ed4b",
+  "countries": 40,
+  "years": [
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022
+  ],
+  "panel_rows": 520,
+  "variable_nonmissing_counts": {
+    "population": 520,
+    "foreign_born": 395,
+    "foreign_nationals": 383,
+    "irregular_stock": 55,
+    "irregular_proxy_overstayers": 45,
+    "irregular_proxy_detections": 298
+  },
+  "sources": {
+    "unique_urls": 173,
+    "retrieved": 163,
+    "failed": 10,
+    "not_run": 0
+  },
+  "tls_note": "Python HTTPS retrievals used an unverified context because the local proxy CA was unavailable to the Python CA bundle; this is recorded in source_register.csv.",
+  "independence_note": "This site was generated in a separate folder from the source workbook. It does not read or copy the Claude-generated website directory."
+}

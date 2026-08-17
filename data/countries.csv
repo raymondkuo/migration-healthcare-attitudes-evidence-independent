@@ -1,0 +1,43 @@
+﻿country,iso3,iso2,m49_code,in_ISSP_wave1,in_ISSP_wave2,in_both_waves,source_cell_wave1,source_cell_wave2
+Australia,AUS,AU,36,1,1,1,B3,J3
+Austria,AUT,AT,40,0,1,0,,J4
+Belgium,BEL,BE,56,1,0,0,B4,
+Bulgaria,BGR,BG,100,1,0,0,B5,
+Chile,CHL,CL,152,1,0,0,B6,
+China,CHN,CN,156,1,1,1,B7,J5
+Croatia,HRV,HR,191,1,1,1,B9,J7
+Czech Republic,CZE,CZ,203,1,1,1,B10,J8
+Denmark,DNK,DK,208,1,1,1,B11,J9
+Finland,FIN,FI,246,1,1,1,B12,J10
+France,FRA,FR,250,1,1,1,B13,J11
+Germany,DEU,DE,276,1,1,1,B14,J12
+Hungary,HUN,HU,348,0,1,0,,J13
+Iceland,ISL,IS,352,0,1,0,,J14
+India,IND,IN,356,0,1,0,,J15
+Israel,ISR,IL,376,1,1,1,B15,J16
+Italy,ITA,IT,380,1,1,1,B16,J17
+Japan,JPN,JP,392,1,1,1,B17,J18
+Korea (South),KOR,KR,410,1,0,0,B18,
+Lithuania,LTU,LT,440,1,0,0,B19,
+Mexico,MEX,MX,484,0,1,0,,J19
+Netherlands,NLD,NL,528,1,1,1,B20,J20
+New Zealand,NZL,NZ,554,0,1,0,,J21
+Norway,NOR,NO,578,1,1,1,B21,J22
+Philippines,PHL,PH,608,1,1,1,B22,J23
+Poland,POL,PL,616,1,1,1,B23,J24
+Portugal,PRT,PT,620,1,0,0,B24,
+Russia,RUS,RU,643,1,1,1,B25,J25
+Slovak Republic,SVK,SK,703,1,1,1,B26,J26
+Slovenia,SVN,SI,705,1,1,1,B27,J27
+South Africa,ZAF,ZA,710,1,1,1,B28,J28
+Spain,ESP,ES,724,1,0,0,B29,
+Suriname,SUR,SR,740,0,1,0,,J29
+Sweden,SWE,SE,752,1,0,0,B30,
+Switzerland,CHE,CH,756,1,1,1,B31,J30
+Taiwan,TWN,TW,158,1,1,1,B8,J6
+Thailand,THA,TH,764,0,1,0,,J31
+Turkey,TUR,TR,792,1,0,0,B32,
+United Kingdom,GBR,GB,826,1,0,0,B33,
+United States,USA,US,840,1,1,1,B34,J32
+"40 unique countries: 32 in wave 1 (column B), 30 in wave 2 (column J), 22 in both.",,,,,,,,
+"Source: ISPSS 2波次 國家比對.xlsx, columns B and J.",,,,,,,,

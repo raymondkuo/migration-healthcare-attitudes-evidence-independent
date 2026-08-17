@@ -1,0 +1,110 @@
+[
+  {
+    "SHEETS": "Panel"
+  },
+  {
+    "SHEETS": "Irregular_estimates"
+  },
+  {
+    "SHEETS": "Long_all_observations"
+  },
+  {
+    "SHEETS": "Countries"
+  },
+  {
+    "SHEETS": "Coverage"
+  },
+  {
+    "SHEETS": "Key_years_2011_2021"
+  },
+  {
+    "SHEETS": "VARIABLES"
+  },
+  {
+    "SHEETS": "Variable"
+  },
+  {
+    "SHEETS": "population"
+  },
+  {
+    "SHEETS": "population_alt_unwpp"
+  },
+  {
+    "SHEETS": "foreign_born"
+  },
+  {
+    "SHEETS": "foreign_nationals"
+  },
+  {
+    "SHEETS": "irregular_stock"
+  },
+  {
+    "SHEETS": "irregular_proxy_overstayers"
+  },
+  {
+    "SHEETS": "irregular_proxy_detections"
+  },
+  {
+    "SHEETS": "SOURCE-SELECTION RULE (Panel sheet)"
+  },
+  {
+    "SHEETS": "• Where more than one source publishes a figure for the same country-year, the Panel sheet reports one preferred estimate and the column \"*_n_estimates\" records how many exist in total."
+  },
+  {
+    "SHEETS": "• Preference order: (1) national government / official statistical agency; (2) Eurostat, OECD, UN, World Bank; (3) research institute or peer-reviewed study; (4) secondary reporting of official data. Ties are broken toward the source providing the longest continuous series for that country, so a single methodology spans as many years as possible."
+  },
+  {
+    "SHEETS": "• Every competing estimate is retained in full on Irregular_estimates and Long_all_observations. Nothing was averaged, interpolated, or imputed: every value in this workbook is a figure a cited source actually published."
+  },
+  {
+    "SHEETS": "KNOWN CAVEATS TO CARRY INTO THE ANALYSIS"
+  },
+  {
+    "SHEETS": "• Reference dates differ. Eurostat and OECD stocks are 1 January of the labelled year (so \"2021\" = the situation at 31 Dec 2020). Taiwan and Korea are 31 December of the labelled year. Australia is 30 June. Check the *_ref_date column before merging with survey fieldwork dates."
+  },
+  {
+    "SHEETS": "• Census re-basing creates breaks in series, notably Germany 2011, Slovenia 2011, Hungary/Portugal/Slovakia 2012, Czechia 2021-22, and Bulgaria/Slovakia/Croatia/Italy/Lithuania 2022."
+  },
+  {
+    "SHEETS": "• Sweden has a break in the detections series (2014: 72,835 -> 2015: 1,445) caused by a change in national reporting practice, not by a change in irregular migration."
+  },
+  {
+    "SHEETS": "• Switzerland, Portugal and Sweden detections were corrected after cross-checking against a second independently compiled dataset: an earlier extraction had shifted those three series one year forward. All 23 European detection series have now been reconciled against Eurostat."
+  },
+  {
+    "SHEETS": "• Turkey: foreign_nationals excludes Syrians under temporary protection. Whether the foreign_born series includes them is UNRESOLVED - UN DESA reports 6,580,295 for 2020 against 2,609,982 in the OECD/TurkStat series here, a gap close to the Syrian temporary-protection population. Verify Turkey against TurkStat before using it."
+  },
+  {
+    "SHEETS": "• Chile: INE revised its irregular-stock estimates sharply upward in 2023 (2020: 14,818 -> 130,017). The Panel uses the revised 2023-methodology series; both vintages are on Irregular_estimates."
+  },
+  {
+    "SHEETS": "• United States: DHS published no January 2021 estimate because the 2020 ACS was unusable, so the 2021 Panel value comes from Pew. Four organisations estimate this population and they differ by up to 1.5 million in a given year."
+  },
+  {
+    "SHEETS": "• United Kingdom: Eurostat coverage ends at 1 Jan 2019; 2020-2021 come from ONS and are published rounded to 0.1 million. No UK stock figure exists for 2022."
+  },
+  {
+    "SHEETS": "• Comparison against an independently compiled version of this dataset (UN WPP population + UN DESA migrant stock) reconciled all 273 shared Eurostat detection cells and corrected three of this file (Switzerland, Portugal, Sweden). Where the two still diverge it is definitional, not an extraction error: UN DESA migrant stock exceeds the Eurostat/OECD foreign-born figure by 74-152% for Turkey, Slovakia and Czechia, and by 19-24% for Germany. Decide per country which definition your research question wants."
+  },
+  {
+    "SHEETS": "• Chile: the OECD foreign-born and foreign-national series are not independent measurements. OECD carries the same underlying SERMIG estimates under different year labels, so foreign_born in year t equals foreign_nationals in year t-1. Do not compare the two for Chile."
+  },
+  {
+    "SHEETS": "• South Africa: the World Bank population series has been rebased on later censuses and runs about 4.8% above the figure Stats SA published at the time (2011: 52,995,205 vs 50,586,757). Denominator choice will visibly move any per-capita share for South Africa."
+  },
+  {
+    "SHEETS": "• Poland: foreign_nationals rises 40.6% between 2016 and 2017 (149,586 to 210,328) with no documented methodology change. Treat with care."
+  },
+  {
+    "SHEETS": "• United States foreign_born comes from OECD IMD and differs trivially from the US Census ACS 1-year estimate (2021: 45,272,945 vs 45,270,103, a gap of 0.006%)."
+  },
+  {
+    "SHEETS": "• United States irregular_stock: DHS Table A2-1 prints two values for both 2010 and 2015, reflecting a Census rebasing and a methodology update. The Panel takes the series-continuous value and the alternative is on Irregular_estimates; both cells are flagged in their notes. Verify against the PDF before publishing either year."
+  },
+  {
+    "SHEETS": "• Taiwan has no published foreign-born statistic and no foreign-national stock before 2012. For 2011 the workbook instead records foreign_workers (425,660 migrant workers on employment permits, MOL) on the Long sheet - a subset of all foreign residents, not a substitute for it."
+  },
+  {
+    "SHEETS": "• The irregular variables should be treated as an ordinal or categorical signal of salience rather than a precise count. Consider using foreign_nationals as the main exposure and the irregular measures as a robustness check."
+  }
+]

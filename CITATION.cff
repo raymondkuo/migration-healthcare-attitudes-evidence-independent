@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Independent migration-healthcare evidence archive"
+title: "Migration, population, and non-national healthcare evidence"
+version: "2026-08-17"
+date-released: "2026-08-17"
+authors:
+  - family-names: "葉"
+    given-names: "明叡"
+repository-code: "https://github.com/raymondkuo/migration-healthcare-attitudes-evidence-independent"

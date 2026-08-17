@@ -1,0 +1,503 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wb:data page="1" pages="350" per_page="50" total="17490" sourceid="2" lastupdated="2026-07-13" xmlns:wb="http://www.worldbank.org">
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2025</wb:date>
+    <wb:value>788844284</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2024</wb:date>
+    <wb:value>769280888</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2023</wb:date>
+    <wb:value>750491370</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2022</wb:date>
+    <wb:value>731821393</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2021</wb:date>
+    <wb:value>713090928</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2020</wb:date>
+    <wb:value>694446100</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2019</wb:date>
+    <wb:value>675950189</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2018</wb:date>
+    <wb:value>657801085</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2017</wb:date>
+    <wb:value>640058741</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2016</wb:date>
+    <wb:value>623369401</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2015</wb:date>
+    <wb:value>607123269</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2014</wb:date>
+    <wb:value>590968990</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2013</wb:date>
+    <wb:value>575202699</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2012</wb:date>
+    <wb:value>559609961</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2011</wb:date>
+    <wb:value>544737983</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2010</wb:date>
+    <wb:value>530308387</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2009</wb:date>
+    <wb:value>516003448</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2008</wb:date>
+    <wb:value>502070763</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2007</wb:date>
+    <wb:value>488580707</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2006</wb:date>
+    <wb:value>475606210</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2005</wb:date>
+    <wb:value>463076637</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2004</wb:date>
+    <wb:value>450928044</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2003</wb:date>
+    <wb:value>439173286</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2002</wb:date>
+    <wb:value>427820358</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2001</wb:date>
+    <wb:value>416807868</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>2000</wb:date>
+    <wb:value>406156661</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1999</wb:date>
+    <wb:value>395750933</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1998</wb:date>
+    <wb:value>385505757</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1997</wb:date>
+    <wb:value>375646235</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1996</wb:date>
+    <wb:value>366138524</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1995</wb:date>
+    <wb:value>356580375</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1994</wb:date>
+    <wb:value>347441809</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1993</wb:date>
+    <wb:value>338324002</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1992</wb:date>
+    <wb:value>329082707</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1991</wb:date>
+    <wb:value>320442961</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1990</wb:date>
+    <wb:value>311748681</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1989</wb:date>
+    <wb:value>302939121</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1988</wb:date>
+    <wb:value>294498625</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1987</wb:date>
+    <wb:value>286067346</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1986</wb:date>
+    <wb:value>277621771</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1985</wb:date>
+    <wb:value>269450407</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1984</wb:date>
+    <wb:value>261458202</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1983</wb:date>
+    <wb:value>253644643</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1982</wb:date>
+    <wb:value>245822010</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1981</wb:date>
+    <wb:value>238043099</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1980</wb:date>
+    <wb:value>230792729</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1979</wb:date>
+    <wb:value>223974122</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1978</wb:date>
+    <wb:value>217074286</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1977</wb:date>
+    <wb:value>210680842</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+  <wb:data>
+    <wb:indicator id="SP.POP.TOTL">Population, total</wb:indicator>
+    <wb:country id="ZH">Africa Eastern and Southern</wb:country>
+    <wb:countryiso3code>AFE</wb:countryiso3code>
+    <wb:date>1976</wb:date>
+    <wb:value>204802976</wb:value>
+    <wb:unit />
+    <wb:obs_status />
+    <wb:decimal>0</wb:decimal>
+  </wb:data>
+</wb:data>

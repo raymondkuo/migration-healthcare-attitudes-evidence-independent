@@ -1,0 +1,2 @@
+
+(function(){function filterTable(input){var table=document.getElementById(input.dataset.filterInput);if(!table)return;var query=input.value.trim().toLowerCase();table.querySelectorAll("tbody tr").forEach(function(row){row.hidden=query && !row.textContent.toLowerCase().includes(query);});}document.querySelectorAll("[data-filter-input]").forEach(function(input){input.addEventListener("input",function(){filterTable(input);});});})();

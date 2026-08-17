@@ -1,0 +1,3 @@
+Snapshot retrieval failed on 2026-08-17
+URL: https://www.sem.admin.ch/dam/sem/de/data/internationales/illegale-migration/sans_papiers/ber-sanspapiers-2015-d.pdf
+Error: HTTP 404: Not Found

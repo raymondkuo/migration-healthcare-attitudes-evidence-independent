@@ -1,0 +1,322 @@
+[
+  {
+    "Country": "Australia",
+    "ISO3": "AUS",
+    "Folder": "country_sources\\AUS_Australia",
+    "Source count": 6,
+    "Downloaded": 5,
+    "Failed": 1
+  },
+  {
+    "Country": "Austria",
+    "ISO3": "AUT",
+    "Folder": "country_sources\\AUT_Austria",
+    "Source count": 5,
+    "Downloaded": 5,
+    "Failed": 0
+  },
+  {
+    "Country": "Belgium",
+    "ISO3": "BEL",
+    "Folder": "country_sources\\BEL_Belgium",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Bulgaria",
+    "ISO3": "BGR",
+    "Folder": "country_sources\\BGR_Bulgaria",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Chile",
+    "ISO3": "CHL",
+    "Folder": "country_sources\\CHL_Chile",
+    "Source count": 5,
+    "Downloaded": 5,
+    "Failed": 0
+  },
+  {
+    "Country": "China",
+    "ISO3": "CHN",
+    "Folder": "country_sources\\CHN_China",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Croatia",
+    "ISO3": "HRV",
+    "Folder": "country_sources\\HRV_Croatia",
+    "Source count": 6,
+    "Downloaded": 6,
+    "Failed": 0
+  },
+  {
+    "Country": "Czech Republic",
+    "ISO3": "CZE",
+    "Folder": "country_sources\\CZE_Czech_Republic",
+    "Source count": 5,
+    "Downloaded": 5,
+    "Failed": 0
+  },
+  {
+    "Country": "Denmark",
+    "ISO3": "DNK",
+    "Folder": "country_sources\\DNK_Denmark",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Finland",
+    "ISO3": "FIN",
+    "Folder": "country_sources\\FIN_Finland",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "France",
+    "ISO3": "FRA",
+    "Folder": "country_sources\\FRA_France",
+    "Source count": 5,
+    "Downloaded": 5,
+    "Failed": 0
+  },
+  {
+    "Country": "Germany",
+    "ISO3": "DEU",
+    "Folder": "country_sources\\DEU_Germany",
+    "Source count": 6,
+    "Downloaded": 6,
+    "Failed": 0
+  },
+  {
+    "Country": "Hungary",
+    "ISO3": "HUN",
+    "Folder": "country_sources\\HUN_Hungary",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Iceland",
+    "ISO3": "ISL",
+    "Folder": "country_sources\\ISL_Iceland",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "India",
+    "ISO3": "IND",
+    "Folder": "country_sources\\IND_India",
+    "Source count": 3,
+    "Downloaded": 3,
+    "Failed": 0
+  },
+  {
+    "Country": "Israel",
+    "ISO3": "ISR",
+    "Folder": "country_sources\\ISR_Israel",
+    "Source count": 3,
+    "Downloaded": 2,
+    "Failed": 1
+  },
+  {
+    "Country": "Italy",
+    "ISO3": "ITA",
+    "Folder": "country_sources\\ITA_Italy",
+    "Source count": 11,
+    "Downloaded": 8,
+    "Failed": 3
+  },
+  {
+    "Country": "Japan",
+    "ISO3": "JPN",
+    "Folder": "country_sources\\JPN_Japan",
+    "Source count": 10,
+    "Downloaded": 9,
+    "Failed": 1
+  },
+  {
+    "Country": "Korea (South)",
+    "ISO3": "KOR",
+    "Folder": "country_sources\\KOR_Korea_South",
+    "Source count": 5,
+    "Downloaded": 4,
+    "Failed": 1
+  },
+  {
+    "Country": "Lithuania",
+    "ISO3": "LTU",
+    "Folder": "country_sources\\LTU_Lithuania",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Mexico",
+    "ISO3": "MEX",
+    "Folder": "country_sources\\MEX_Mexico",
+    "Source count": 4,
+    "Downloaded": 3,
+    "Failed": 1
+  },
+  {
+    "Country": "Netherlands",
+    "ISO3": "NLD",
+    "Folder": "country_sources\\NLD_Netherlands",
+    "Source count": 6,
+    "Downloaded": 6,
+    "Failed": 0
+  },
+  {
+    "Country": "New Zealand",
+    "ISO3": "NZL",
+    "Folder": "country_sources\\NZL_New_Zealand",
+    "Source count": 5,
+    "Downloaded": 5,
+    "Failed": 0
+  },
+  {
+    "Country": "Norway",
+    "ISO3": "NOR",
+    "Folder": "country_sources\\NOR_Norway",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Philippines",
+    "ISO3": "PHL",
+    "Folder": "country_sources\\PHL_Philippines",
+    "Source count": 4,
+    "Downloaded": 3,
+    "Failed": 1
+  },
+  {
+    "Country": "Poland",
+    "ISO3": "POL",
+    "Folder": "country_sources\\POL_Poland",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Portugal",
+    "ISO3": "PRT",
+    "Folder": "country_sources\\PRT_Portugal",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Russia",
+    "ISO3": "RUS",
+    "Folder": "country_sources\\RUS_Russia",
+    "Source count": 3,
+    "Downloaded": 3,
+    "Failed": 0
+  },
+  {
+    "Country": "Slovak Republic",
+    "ISO3": "SVK",
+    "Folder": "country_sources\\SVK_Slovak_Republic",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Slovenia",
+    "ISO3": "SVN",
+    "Folder": "country_sources\\SVN_Slovenia",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "South Africa",
+    "ISO3": "ZAF",
+    "Folder": "country_sources\\ZAF_South_Africa",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Spain",
+    "ISO3": "ESP",
+    "Folder": "country_sources\\ESP_Spain",
+    "Source count": 7,
+    "Downloaded": 7,
+    "Failed": 0
+  },
+  {
+    "Country": "Suriname",
+    "ISO3": "SUR",
+    "Folder": "country_sources\\SUR_Suriname",
+    "Source count": 3,
+    "Downloaded": 3,
+    "Failed": 0
+  },
+  {
+    "Country": "Sweden",
+    "ISO3": "SWE",
+    "Folder": "country_sources\\SWE_Sweden",
+    "Source count": 4,
+    "Downloaded": 4,
+    "Failed": 0
+  },
+  {
+    "Country": "Switzerland",
+    "ISO3": "CHE",
+    "Folder": "country_sources\\CHE_Switzerland",
+    "Source count": 6,
+    "Downloaded": 5,
+    "Failed": 1
+  },
+  {
+    "Country": "Taiwan",
+    "ISO3": "TWN",
+    "Folder": "country_sources\\TWN_Taiwan",
+    "Source count": 7,
+    "Downloaded": 7,
+    "Failed": 0
+  },
+  {
+    "Country": "Thailand",
+    "ISO3": "THA",
+    "Folder": "country_sources\\THA_Thailand",
+    "Source count": 3,
+    "Downloaded": 3,
+    "Failed": 0
+  },
+  {
+    "Country": "Turkey",
+    "ISO3": "TUR",
+    "Folder": "country_sources\\TUR_Turkey",
+    "Source count": 5,
+    "Downloaded": 5,
+    "Failed": 0
+  },
+  {
+    "Country": "United Kingdom",
+    "ISO3": "GBR",
+    "Folder": "country_sources\\GBR_United_Kingdom",
+    "Source count": 7,
+    "Downloaded": 7,
+    "Failed": 0
+  },
+  {
+    "Country": "United States",
+    "ISO3": "USA",
+    "Folder": "country_sources\\USA_United_States",
+    "Source count": 13,
+    "Downloaded": 12,
+    "Failed": 1
+  }
+]

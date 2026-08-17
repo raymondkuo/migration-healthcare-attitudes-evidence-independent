@@ -1,0 +1,3 @@
+Snapshot retrieval failed on 2026-08-17
+URL: https://psa.gov.ph/content/foreign-citizens-country-2020-census-population-and-housing
+Error: HTTP 403: Forbidden

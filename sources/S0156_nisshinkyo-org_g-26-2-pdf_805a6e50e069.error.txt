@@ -1,0 +1,3 @@
+Snapshot retrieval failed on 2026-08-17
+URL: https://www.nisshinkyo.org/news/pdf/G-26-2.pdf
+Error: HTTP 404: Not Found
