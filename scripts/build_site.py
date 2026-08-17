@@ -441,6 +441,25 @@ def stat_card(value, label, detail="", href=None, depth=0, download=True):
     return f'<div class="stat"><strong>{value_html}</strong><span>{esc(label)}</span>{f"<small>{esc(detail)}</small>" if detail else ""}</div>'
 
 
+def progress_row(label, value, total, detail="", href=None, depth=0, tone="teal"):
+    """Render a readable, accessible coverage/status bar with its value in text."""
+    total = max(0, total or 0)
+    value = max(0, value or 0)
+    percent = round((value / total) * 100, 1) if total else 0
+    width = min(100, max(0, percent))
+    value_html = local_value(value, href=href, depth=depth, title=f"Evidence for {label}")
+    return f"""
+    <div class="bar-row">
+      <div class="bar-row-head">
+        <div class="bar-copy"><strong>{esc(label)}</strong><span>{esc(detail)}</span></div>
+        <div class="bar-value">{value_html}<span>/ {format_number(total)}</span><em>{percent:g}%</em></div>
+      </div>
+      <div class="bar-track" role="progressbar" aria-label="{esc(label)}" aria-valuenow="{value}" aria-valuemin="0" aria-valuemax="{total}">
+        <span class="bar-fill bar-fill-{esc(tone)}" style="width: {width:g}%"></span>
+      </div>
+    </div>"""
+
+
 def build_panel_evidence(panel, source_lookup):
     evidence_rows = []
     for row in panel:
@@ -881,29 +900,83 @@ def main():
             f'<td>{local_value(row.get("coverage_irregular_proxy_detections"), href="data/coverage.csv", title="Coverage evidence in the local workbook export")}</td>'
             "</tr>"
         )
+    panel_years = sorted({row.get("year") for row in panel if row.get("year") is not None})
+    year_span = f"{panel_years[0]}–{panel_years[-1]}" if panel_years else "—"
+    metric_descriptions = {
+        "population": ("Population", "Denominator for country-year comparisons", "teal"),
+        "foreign_born": ("Foreign-born", "Place of birth; not a citizenship measure", "blue"),
+        "foreign_nationals": ("Foreign nationals", "Citizenship-based measure where covered", "indigo"),
+        "irregular_stock": ("Irregular stock", "Irregular or unauthorised stock estimates", "coral"),
+        "irregular_proxy_overstayers": ("Overstayer proxy", "Separate proxy; not pooled with stock estimates", "amber"),
+        "irregular_proxy_detections": ("Detection proxy", "Enforcement detections, kept as a distinct field", "red"),
+    }
+    coverage_metric_rows = "".join(
+        progress_row(
+            label,
+            variable_counts[variable],
+            len(panel),
+            detail,
+            href="data/panel.csv",
+            tone=tone,
+        )
+        for variable, (label, detail, tone) in metric_descriptions.items()
+    )
+    source_capture_rows = "".join(
+        progress_row(label, value, source_stats["unique_urls"], detail, href="data/source_register.csv", tone=tone)
+        for label, value, detail, tone in [
+            ("Direct local snapshots", direct_retrieved, "Original workbook URL captured locally", "teal"),
+            ("Alternate local snapshots", alternate_retrieved, "Official alternate location captured locally", "blue"),
+            ("External mirrors", external_mirrors, "Mirror link retained with a local pointer", "amber"),
+            ("Retrieval records", failed, "Original URL and failed request retained", "coral"),
+        ]
+        if value or label != "Retrieval records"
+    )
     index_body = f"""
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Independent evidence warehouse · frozen {esc(TODAY)}</p>
         <h1>Migration, population, and non-national healthcare evidence.</h1>
-        <p class="lede">A reviewer-facing index of the 40-country, 2010–2022 panel. The site is generated afresh from the user-provided workbook and preserves downloadable data, source URLs, and locally captured snapshots.</p>
+        <p class="lede">A reviewer-facing index of a <strong>40-country panel across {esc(year_span)}</strong>. The site is generated from the user-provided workbook and keeps the statistics, source trail, and evidence files visible and reviewable.</p>
         <div class="button-row">
           <a class="button" href="countries.html">Browse countries</a>
           <a class="button ghost" href="data/{esc(source_workbook.name)}" download>Download workbook</a>
+        </div>
+        <div class="hero-inline-stats" aria-label="Panel shape">
+          <div><strong>{format_number(len(by_iso))}</strong><span>countries</span></div>
+          <div><strong>{format_number(len(panel))}</strong><span>country-year rows</span></div>
+          <div><strong>{format_number(len(panel_evidence_rows))}</strong><span>linked evidence records</span></div>
         </div>
       </div>
       <div class="hero-note">
         <span class="note-label">Independent build</span>
         <strong>Separate folder, separate repository</strong>
-        <p>This implementation does not copy the existing Claude-generated website. Its source input is the workbook at the original outputs folder. Co-work of <a href="https://raymond.cph.ntu.edu.tw/" target="_blank" rel="noreferrer">Prof. Raymond Kuo, National Taiwan University</a> and OpenAI GTP-5.6-luna.</p>
+        <p>This implementation does not copy the existing Claude-generated website. Its source input is the workbook at the original outputs folder.</p>
+        <div class="note-credit"><span class="note-dot"></span><span>Co-work of <a href="https://raymond.cph.ntu.edu.tw/" target="_blank" rel="noreferrer">Prof. Raymond Kuo, National Taiwan University</a> and OpenAI GTP-5.6-luna.</span></div>
       </div>
     </section>
     <div class="stat-grid">
-      {stat_card(len(by_iso), "countries", "selected panel", href="data/countries.csv")}
-      {stat_card(len(panel), "country-year rows", "40 × 13", href="data/panel.csv")}
-      {stat_card(source_stats["unique_urls"], "source URLs", f'{retrieved} local snapshots + {external_mirrors} external mirrors', href="data/source_register.csv")}
-      {stat_card(sum(1 for row in panel for value in row.values() if value not in (None, "")), "populated cells", "Panel sheet", href="data/panel.csv")}
+      {stat_card(len(by_iso), "countries in the panel", f"{len(by_iso)} ISO3 profiles", href="data/countries.csv")}
+      {stat_card(len(panel), "country-year observations", f"{len(by_iso)} × {len(panel_years)} years", href="data/panel.csv")}
+      {stat_card(len(panel_evidence_rows), "linked evidence records", "one record per displayed Panel value", href="data/panel_evidence.csv")}
+      {stat_card(source_stats["unique_urls"], "distinct source URLs", f"{retrieved} local · {external_mirrors} mirror · {failed} record", href="data/source_register.csv")}
     </div>
+    <section class="section-intro">
+      <div><p class="eyebrow">Numbers first</p><h2>What is actually in the panel</h2><p>These counts are listed on the page so the data story is visible before anyone opens a download.</p></div>
+      <span class="section-note">{esc(year_span)} · {format_number(len(panel))} rows</span>
+    </section>
+    <section class="dashboard-grid">
+      <article class="panel dashboard-panel">
+        <div class="panel-head"><div><p class="eyebrow">Measure coverage</p><h2>Six fields, kept separate</h2></div><span class="panel-chip">{format_number(len(panel))} rows</span></div>
+        <div class="bar-list">{coverage_metric_rows}</div>
+        <p class="fine-print">Each number is the nonblank count out of the {format_number(len(panel))} country-year rows. Click a count to open the local Panel export. Foreign-born, foreign nationals, irregular stock, overstayer proxies, and detections are deliberately not combined into one measure.</p>
+      </article>
+      <article class="panel dashboard-panel source-panel">
+        <div class="panel-head"><div><p class="eyebrow">Evidence capture</p><h2>Source trail status</h2></div><span class="panel-chip">{format_number(source_stats["unique_urls"])} URLs</span></div>
+        <div class="source-total"><strong>{format_number(retrieved)}</strong><span>of {format_number(source_stats["unique_urls"])} URLs have local response files</span></div>
+        <div class="bar-list">{source_capture_rows}</div>
+        <a class="text-link" href="sources.html">Inspect every source and status →</a>
+      </article>
+    </section>
     <section class="split">
       <div class="panel">
         <div class="panel-head"><div><p class="eyebrow">Recommended use</p><h2>Keep the concepts separate</h2></div></div>
@@ -1010,6 +1083,28 @@ def main():
 
     (output / "assets" / "site.css").write_text(
         r"""
+/* Refreshed visual system: the landing page leads with readable numbers and calm, evidence-oriented colour. */
+@media(max-width:600px){body .header-inner{min-width:0}body .nav{width:100%;min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}body .nav-link{text-align:center;padding-left:6px;padding-right:6px}body .hero,body .hero-copy,body .hero-note,body .stat-grid,body .dashboard-grid{width:100%;min-width:0}body .hero-copy,body .hero-note{overflow-wrap:anywhere}body .hero h1{overflow-wrap:break-word}body .button-row{display:grid;grid-template-columns:1fr;min-width:0}body .button-row .button{width:100%;max-width:100%}body .stat-grid{grid-template-columns:1fr!important}}
+:root{--ui-ink:#102a43;--ui-muted:#627d98;--ui-line:#d9e2ec;--ui-paper:#f4f7fb;--ui-panel:#ffffff;--ui-teal:#0f766e;--ui-teal-dark:#115e59;--ui-blue:#2563eb;--ui-indigo:#4f46e5;--ui-coral:#e76f51;--ui-amber:#d97706;--ui-red:#dc4c4c;--ui-soft:#e8f5f2;--ui-soft-blue:#eaf0ff;--ui-soft-coral:#fff0eb;--ui-shadow:0 18px 50px rgba(16,42,67,.09);--ui-hero:#102a43;--ui-hero-fg:#f8fbff;--ui-hero-muted:rgba(248,251,255,.78)}
+html{scroll-behavior:smooth}html body{color:var(--ui-ink);background:linear-gradient(180deg,#fbfcfe 0%,var(--ui-paper) 72%,#eef3f8 100%)}
+body a{color:var(--ui-teal-dark)}body .shell{max-width:1240px;padding-left:32px;padding-right:32px}body .site-header{background:rgba(255,255,255,.9);border-bottom-color:rgba(217,226,236,.9);backdrop-filter:blur(14px)}
+body .brand{color:var(--ui-ink)}body .brand-mark{background:linear-gradient(135deg,var(--ui-teal),var(--ui-blue));box-shadow:0 8px 18px rgba(15,118,110,.22)}body .brand small{color:var(--ui-muted)}body .nav-link{color:var(--ui-muted)}body .nav-link:hover,body .nav-link.active{background:var(--ui-soft);color:var(--ui-teal-dark)}
+body .hero{position:relative;isolation:isolate;grid-template-columns:minmax(0,1.5fr) minmax(300px,.72fr);gap:34px;margin:38px 0 26px;padding:58px clamp(28px,5vw,70px);border:0;border-radius:30px;overflow:hidden;color:var(--ui-hero-fg);background:radial-gradient(circle at 88% 18%,rgba(37,99,235,.42),transparent 34%),radial-gradient(circle at 8% 92%,rgba(15,118,110,.48),transparent 38%),var(--ui-hero);box-shadow:0 24px 62px rgba(16,42,67,.2)}
+body .hero:after{content:"";position:absolute;right:-110px;bottom:-150px;width:420px;height:420px;border:1px solid rgba(255,255,255,.12);border-radius:50%;box-shadow:0 0 0 34px rgba(255,255,255,.035),0 0 0 68px rgba(255,255,255,.025);pointer-events:none}body .hero-copy,body .hero-note{position:relative;z-index:1}body .hero .eyebrow{color:#a7f3d0}body .hero h1{max-width:780px;margin:10px 0 22px;color:var(--ui-hero-fg);font-size:clamp(40px,5.3vw,72px);letter-spacing:-.055em}body .hero .lede{max-width:720px;color:var(--ui-hero-muted);font-size:18px}body .hero .lede strong{color:var(--ui-hero-fg)}
+body .button-row{margin-top:30px}body .hero .button{border-color:var(--ui-teal);background:var(--ui-teal);color:#fff;box-shadow:0 10px 22px rgba(0,0,0,.12)}body .hero .button:hover{background:#0d9488}body .hero .button.ghost{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:var(--ui-hero-fg);box-shadow:none}body .hero .button.ghost:hover{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.18)}
+body .hero-note{align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding:26px;border:1px solid rgba(255,255,255,.22);border-radius:20px;background:rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}body .hero-note .note-label{color:#a7f3d0;margin-bottom:14px}body .hero-note strong{color:var(--ui-hero-fg);font-size:25px}body .hero-note p{color:var(--ui-hero-muted);margin:14px 0 0}body .hero-note a{color:#fff;text-decoration:underline;text-decoration-color:rgba(255,255,255,.55);text-underline-offset:3px}body .note-credit{display:flex;gap:9px;align-items:flex-start;margin-top:20px;color:var(--ui-hero-muted);font-size:13px;line-height:1.45}body .note-dot{flex:0 0 9px;width:9px;height:9px;margin-top:6px;border-radius:50%;background:#f7c948;box-shadow:0 0 0 5px rgba(247,201,72,.14)}
+body .hero-inline-stats{display:flex;flex-wrap:wrap;gap:26px;margin-top:38px;padding-top:21px;border-top:1px solid rgba(255,255,255,.2)}body .hero-inline-stats div{display:flex;flex-direction:column;gap:1px}body .hero-inline-stats strong{font-size:25px;line-height:1;color:var(--ui-hero-fg)}body .hero-inline-stats span{color:var(--ui-hero-muted);font-size:12px;letter-spacing:.04em}
+body .stat-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0 0 44px}body .stat{position:relative;min-height:142px;padding:24px 22px 21px;border:1px solid var(--ui-line);border-radius:18px;background:var(--ui-panel);box-shadow:var(--ui-shadow);overflow:hidden}body .stat:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--ui-teal),var(--ui-blue))}body .stat strong{font-size:38px;line-height:1.05;color:var(--ui-ink)}body .stat strong a{color:inherit}body .stat span{margin-top:9px;color:var(--ui-ink);font-size:14px;font-weight:700}body .stat small{color:var(--ui-muted);font-size:12px;margin-top:5px}
+body .section-intro{display:flex;align-items:end;justify-content:space-between;gap:24px;margin:0 0 14px}body .section-intro h2{margin:6px 0 3px;font-size:31px;line-height:1.12;letter-spacing:-.035em}body .section-intro p:not(.eyebrow){margin:0;color:var(--ui-muted)}body .section-note{padding:8px 12px;border-radius:10px;background:var(--ui-soft-blue);color:#1e40af;font-size:12px;font-weight:800;white-space:nowrap}
+body .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.24fr) minmax(320px,.76fr);gap:18px;margin:0 0 34px}body .dashboard-grid .panel{margin:0}body .dashboard-panel{padding:27px 27px 24px}body .dashboard-panel .panel-head{margin-bottom:19px}body .dashboard-panel h2{font-size:25px}body .panel-chip{padding:6px 10px;border-radius:9px;background:var(--ui-soft);color:var(--ui-teal-dark);font-size:11px;font-weight:800;white-space:nowrap}body .source-panel .panel-chip{background:var(--ui-soft-blue);color:#1e40af}
+body .bar-list{display:grid;gap:17px}body .bar-row{min-width:0}body .bar-row-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px}body .bar-copy{min-width:0;display:flex;flex-direction:column;gap:2px}body .bar-copy strong{font-size:14px;color:var(--ui-ink)}body .bar-copy span{color:var(--ui-muted);font-size:12px;line-height:1.35}body .bar-value{display:flex;align-items:baseline;gap:5px;flex:0 0 auto;color:var(--ui-muted);font-size:12px;white-space:nowrap}body .bar-value a,body .bar-value>a{color:var(--ui-ink);font-size:16px;font-weight:800}body .bar-value em{margin-left:5px;color:var(--ui-teal-dark);font-size:12px;font-style:normal;font-weight:800}body .bar-track{height:9px;margin-top:8px;overflow:hidden;border-radius:99px;background:#e7edf3}body .bar-fill{display:block;height:100%;min-width:2px;border-radius:99px}.bar-fill-teal{background:var(--ui-teal)}.bar-fill-blue{background:var(--ui-blue)}.bar-fill-indigo{background:var(--ui-indigo)}.bar-fill-coral{background:var(--ui-coral)}.bar-fill-amber{background:var(--ui-amber)}.bar-fill-red{background:var(--ui-red)}
+body .source-total{display:flex;align-items:baseline;gap:10px;margin:0 0 23px;padding-bottom:19px;border-bottom:1px solid var(--ui-line)}body .source-total strong{color:var(--ui-teal-dark);font-size:38px;line-height:1}body .source-total span{color:var(--ui-muted);font-size:13px}body .source-panel .bar-list{gap:19px}body .source-panel .text-link{display:inline-block;margin-top:22px}
+body .split{gap:18px;margin-bottom:31px}body .panel{border-color:var(--ui-line);border-radius:18px;background:var(--ui-panel);box-shadow:var(--ui-shadow)}body .accent-panel{border-color:#b9ded9;background:linear-gradient(145deg,#eefaf7,var(--ui-soft))}body .panel h2{color:var(--ui-ink)}body .panel-head{margin-bottom:18px}body .clean-list li{border-bottom-color:rgba(15,118,110,.14)}body .text-link{color:var(--ui-teal-dark)}
+body .table-wrap{border-color:var(--ui-line);border-radius:12px}body table{background:var(--ui-panel)}body th{background:#edf3f8;color:#486581}body th,body td{border-bottom-color:var(--ui-line)}body tbody tr:hover{background:#f5fafb}body .coverage-grid div{background:#eef4f7}body code{background:#e8eef4;color:#243b53}body .site-footer{background:rgba(255,255,255,.7);border-top-color:var(--ui-line)}body .footer-inner{color:var(--ui-muted)}
+body .page-head{padding-top:54px}body .page-head h1{color:var(--ui-ink)}body .lede{color:var(--ui-muted)}body .eyebrow{color:var(--ui-teal)}body .tag-ok{background:#dcf2e7;color:#17613b}body .tag-warn{background:#fff4df;color:#9b5b12}
+@media(max-width:850px){body .shell{padding-left:22px;padding-right:22px}body .hero,body .dashboard-grid{grid-template-columns:1fr}body .hero{padding:45px 34px}body .hero-note{min-height:0}body .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}body .section-intro{align-items:flex-start;flex-direction:column;gap:10px}}
+@media(max-width:500px){body .shell{padding-left:16px;padding-right:16px}body .hero{margin-top:22px;padding:34px 23px 28px;border-radius:22px}body .hero h1{font-size:clamp(36px,11vw,52px)}body .hero-inline-stats{gap:18px;margin-top:29px}body .hero-inline-stats strong{font-size:22px}body .stat-grid{grid-template-columns:1fr;gap:12px;margin-bottom:34px}body .stat{min-height:0}body .dashboard-panel{padding:22px 18px}body .bar-row-head{align-items:flex-start;flex-direction:column;gap:4px}body .source-total{align-items:flex-start;flex-direction:column;gap:4px}body .section-intro h2{font-size:27px}}
+
 :root{--ink:#17212b;--muted:#61707d;--line:#dce3e7;--paper:#f7f9fa;--panel:#fff;--accent:#0b6e69;--accent-dark:#074d4a;--soft:#e7f3f1;--warn:#9b5b12;--warn-bg:#fff4df;--shadow:0 12px 32px rgba(23,33,43,.07);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 *{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper);line-height:1.55}a{color:var(--accent-dark);text-decoration:none}a:hover{text-decoration:underline}.shell{max-width:1180px;margin:0 auto;padding:0 28px}.site-header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.header-inner{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none}.brand:hover{text-decoration:none}.brand-mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;font-weight:800}.brand strong,.brand small{display:block}.brand small{font-size:11px;color:var(--muted);letter-spacing:.04em}.nav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.nav-link{padding:8px 11px;border-radius:8px;color:var(--muted);font-size:14px}.nav-link:hover,.nav-link.active{background:var(--soft);color:var(--accent-dark);text-decoration:none}.hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);gap:26px;padding:70px 0 34px}.hero h1{max-width:760px;font-size:clamp(38px,5vw,68px);line-height:1.03;letter-spacing:-.05em;margin:8px 0 20px}.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:48px 0 24px}.page-head h1{font-size:clamp(34px,5vw,54px);line-height:1.05;letter-spacing:-.045em;margin:8px 0}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--accent);margin:0}.lede{max-width:760px;color:var(--muted);font-size:18px}.hero-note{align-self:center;padding:24px;border:1px solid #b9ded9;background:var(--soft);border-radius:16px}.note-label{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--accent);margin-bottom:12px}.hero-note strong{display:block;font-size:24px;line-height:1.15}.hero-note p{color:var(--muted);margin-bottom:0}.button-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.button{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--accent);border-radius:9px;background:var(--accent);color:#fff;padding:11px 16px;font-weight:700}.button:hover{background:var(--accent-dark);text-decoration:none}.button.ghost{background:#fff;color:var(--accent-dark);border-color:var(--line)}.button.ghost:hover{border-color:var(--accent);background:var(--soft)}.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 28px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:20px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:31px;letter-spacing:-.04em}.stat span{display:block;color:var(--muted);font-size:14px}.stat small{display:block;color:var(--muted);font-size:12px;margin-top:4px}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:28px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:25px;margin:18px 0;box-shadow:var(--shadow)}.accent-panel{background:var(--soft);border-color:#b9ded9}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px}.panel h2{font-size:24px;line-height:1.15;margin:6px 0 0;letter-spacing:-.025em}.clean-list{list-style:none;margin:0;padding:0}.clean-list li{padding:11px 0;border-bottom:1px solid rgba(11,110,105,.16)}.clean-list li:last-child{border-bottom:0}.text-link{font-weight:700;color:var(--accent-dark);white-space:nowrap}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:#f1f5f6;color:#394854;font-size:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#fbfdfd}.numeric{text-align:right;white-space:nowrap}.url-cell{min-width:280px;overflow-wrap:anywhere}.fine-print,.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;border-radius:99px;padding:2px 8px;font-size:11px;font-weight:800;white-space:nowrap}.tag-ok{background:#dcf2e7;color:#17613b}.tag-warn{background:var(--warn-bg);color:var(--warn)}code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;background:#edf1f2;padding:2px 5px;border-radius:4px;font-size:.9em}.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:15px}.toolbar label{font-weight:700;font-size:14px}.toolbar input{flex:1;max-width:420px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit}.coverage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.coverage-grid div{padding:13px;background:#f4f7f7;border-radius:9px}.coverage-grid span,.coverage-grid strong{display:block}.coverage-grid span{color:var(--muted);font-size:12px;text-transform:capitalize}.coverage-grid strong{margin-top:3px}.source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.source-card{border:1px solid var(--line);border-radius:11px;padding:16px}.source-card h3{font-size:16px;line-height:1.3;margin:7px 0}.source-card p{font-size:13px;color:var(--muted);overflow-wrap:anywhere}.source-id{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.08em}.prose-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.prose-grid .panel{margin:0}.prose-grid h2{margin-top:5px}.prose-grid p{color:var(--muted)}pre{background:#17212b;color:#e7f3f1;border-radius:10px;padding:17px;overflow-x:auto}pre code{background:none;padding:0}.site-footer{border-top:1px solid var(--line);margin-top:60px;background:#fff}.footer-inner{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--muted);font-size:13px}@media(max-width:850px){.header-inner{align-items:flex-start;padding-top:15px;padding-bottom:15px;flex-direction:column}.nav{justify-content:flex-start}.hero,.split,.prose-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}.page-head{align-items:flex-start;flex-direction:column}.source-grid{grid-template-columns:1fr}.coverage-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.shell{padding:0 16px}.hero{padding-top:42px}.stat-grid{grid-template-columns:1fr}.footer-inner{align-items:flex-start;flex-direction:column;padding-top:18px;padding-bottom:18px}}
 """,
