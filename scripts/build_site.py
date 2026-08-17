@@ -146,6 +146,8 @@ def url_extension(url, content_type="", content=b""):
         return ".xml"
     if "csv" in lowered or url.lower().endswith(".csv"):
         return ".csv"
+    if "plain" in lowered or "text" in lowered:
+        return ".txt"
     if "html" in lowered or "xhtml" in lowered:
         return ".html"
     suffix = Path(urlsplit(url).path).suffix.lower()
