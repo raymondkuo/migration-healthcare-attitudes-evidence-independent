@@ -1,0 +1,6 @@
+External evidence mirror pointer
+Generated on: 2026-08-17
+Original workbook URL: https://psa.gov.ph/content/foreign-citizens-country-2020-census-population-and-housing
+Mirror URL: https://psa.gov.ph/system/files/phcd/1_PR%20on%20Citizenship.pdf
+The local environment could not capture the mirror bytes; use the mirror URL for the source document.
+Local retrieval note: https://psa.gov.ph/system/files/phcd/1_PR%20on%20Citizenship.pdf: HTTP 403: Forbidden

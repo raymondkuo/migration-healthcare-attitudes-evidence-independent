@@ -19,6 +19,7 @@
     2022
   ],
   "panel_rows": 520,
+  "panel_evidence_rows": 2994,
   "variable_nonmissing_counts": {
     "population": 520,
     "foreign_born": 395,
@@ -29,10 +30,14 @@
   },
   "sources": {
     "unique_urls": 173,
-    "retrieved": 163,
-    "failed": 10,
+    "retrieved": 170,
+    "direct_retrieved": 166,
+    "alternate_retrieved": 4,
+    "external_mirrors": 2,
+    "failed": 1,
     "not_run": 0
   },
   "tls_note": "Python HTTPS retrievals used an unverified context because the local proxy CA was unavailable to the Python CA bundle; this is recorded in source_register.csv.",
-  "independence_note": "This site was generated in a separate folder from the source workbook. It does not read or copy the Claude-generated website directory."
+  "independence_note": "This site was generated in a separate folder from the source workbook. It does not read or copy the Claude-generated website directory.",
+  "cowork_note": "Co-work of Prof. Raymond Kuo, National Taiwan University, and OpenAI GTP-5.6-luna."
 }

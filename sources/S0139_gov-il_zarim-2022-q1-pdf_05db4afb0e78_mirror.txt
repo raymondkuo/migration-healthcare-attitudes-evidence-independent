@@ -1,0 +1,6 @@
+External evidence mirror pointer
+Generated on: 2026-08-17
+Original workbook URL: https://www.gov.il/BlobFolder/generalpage/foreign_workers_stats/he/zarim_2022_q1.pdf
+Mirror URL: https://www.gov.il/BlobFolder/news/foreign_workers_report_q1_2022/he/zarim_2022_q1.pdf
+The local environment could not capture the mirror bytes; use the mirror URL for the source document.
+Local retrieval note: https://www.gov.il/BlobFolder/news/foreign_workers_report_q1_2022/he/zarim_2022_q1.pdf: HTTP 403: Forbidden

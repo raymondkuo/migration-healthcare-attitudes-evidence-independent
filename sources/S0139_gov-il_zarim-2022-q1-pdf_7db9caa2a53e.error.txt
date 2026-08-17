@@ -1,3 +1,0 @@
-Snapshot retrieval failed on 2026-08-17
-URL: https://www.gov.il/BlobFolder/generalpage/foreign_workers_stats/he/zarim_2022_q1.pdf
-Error: HTTP 403: Forbidden

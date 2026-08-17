@@ -12,7 +12,7 @@
     <div class="shell header-inner">
       <a class="brand" href="index.html">
         <span class="brand-mark">M</span>
-        <span><strong>Migration evidence</strong><small>independent archive · 17 Aug 2026</small></span>
+        <span><strong>Migration evidence</strong><small>independent archive · 2026-08-17</small></span>
       </a>
       <nav class="nav"><a class="nav-link " href="index.html">Overview</a><a class="nav-link " href="countries.html">Countries</a><a class="nav-link " href="data.html">Data files</a><a class="nav-link " href="sources.html">Sources</a><a class="nav-link active" href="methods.html">Methods</a><a class="nav-link " href="verification.html">Checks</a></nav>
     </div>
@@ -23,15 +23,15 @@
     <section class="prose-grid">
       <article class="panel"><p class="eyebrow">Input</p><h2>One workbook</h2><p>The build reads the user-provided workbook migration_population_panel_40countries_2010-2022_final.xlsx from the original outputs folder. It reads the Panel, Codebook, Countries, Coverage, Key years, irregular estimates, long observations, and Source Audit sheets.</p></article>
       <article class="panel"><p class="eyebrow">Output</p><h2>Static, reviewable files</h2><p>Country pages, CSV/JSON exports, the source register, local snapshots, and a manifest are written into this repository. No database or runtime API is required to browse the site.</p></article>
-      <article class="panel"><p class="eyebrow">Snapshots</p><h2>What “local” means</h2><p>For each distinct source URL, the build makes an independent HTTP request and stores the response when available. PDFs remain PDF files; JSON/CSV/XML/HTML responses retain their response bytes. HTTP failures are not silently replaced: the original URL and a local error record remain visible.</p></article>
+      <article class="panel"><p class="eyebrow">Snapshots</p><h2>What “local” means</h2><p>For each distinct source URL, the build makes an independent HTTP request and stores the response when available. PDFs remain PDF files; JSON/CSV/XML/HTML responses retain their response bytes. When a host blocks local capture, the source register keeps a local pointer and the displayed Panel value links to the listed external PDF mirror. Each nonblank value in the Panel data table has a clickable evidence link.</p></article>
       <article class="panel"><p class="eyebrow">Concepts</p><h2>Do not pool unlike measures</h2><p>Population is a denominator. Foreign-born is place of birth. Foreign nationals is citizenship. Irregular stock, overstayer proxies, and enforcement detections differ in concept and reference date; this site preserves them as separate fields.</p></article>
     </section>
-    <section class="panel"><div class="panel-head"><div><p class="eyebrow">Reproducibility</p><h2>Build command</h2></div></div><pre><code>python scripts/build_site.py --workbook &lt;path-to-workbook&gt; --output . --workers 8</code></pre><p class="fine-print">Run from this repository. The script never reads the prior Claude-generated website directory.</p></section>
+    <section class="panel"><div class="panel-head"><div><p class="eyebrow">Reproducibility</p><h2>Build command</h2></div></div><pre><code>python scripts/build_site.py --workbook &lt;path-to-workbook&gt; --output . --workers 8</code></pre><p class="fine-print">Run from this repository. The script never reads the prior Claude-generated website directory. Co-work of Prof. Raymond Kuo, National Taiwan University, and OpenAI GTP-5.6-luna.</p></section>
     
   </main>
   <footer class="site-footer">
     <div class="shell footer-inner">
-      <span>Built independently from the user-provided workbook.</span>
+      <span>Built independently from the user-provided workbook. Co-work of <a href="https://raymond.cph.ntu.edu.tw/" target="_blank" rel="noreferrer">Prof. Raymond Kuo, National Taiwan University</a> and OpenAI GTP-5.6-luna.</span>
       <span><a href="README.md">README</a> · <a href="manifest.json">manifest</a></span>
     </div>
   </footer>

@@ -23,7 +23,7 @@ from openpyxl import load_workbook
 
 
 TODAY = dt.date.today().isoformat()
-USER_AGENT = "migration-healthcare-independent-archive/1.0 (research evidence snapshot)"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) migration-healthcare-independent-archive/1.1"
 # The execution environment intercepts HTTPS with a local proxy CA that is not
 # present in Python's CA bundle. Retrieval is therefore recorded as unverified;
 # the original URL, response bytes, and SHA-256 remain preserved for review.
@@ -47,6 +47,36 @@ PANEL_DISPLAY_COLUMNS = [
     ("irregular_proxy_overstayers", "Overstayer proxy"),
     ("irregular_proxy_detections", "Detection proxy"),
 ]
+PANEL_SOURCE_FIELDS = {
+    "population": "population_url",
+    "foreign_born": "foreign_born_url",
+    "foreign_born_pct_pop": "foreign_born_url",
+    "foreign_nationals": "foreign_nationals_url",
+    "foreign_nationals_pct_pop": "foreign_nationals_url",
+    "irregular_stock": "irregular_stock_url",
+    "irregular_proxy_overstayers": "irregular_proxy_overstayers_url",
+    "irregular_proxy_detections": "irregular_proxy_detections_url",
+}
+LOCAL_EVIDENCE_STATUSES = {"retrieved", "retrieved_via_alternate"}
+
+# A few source hosts block automated retrieval or have moved the same official
+# document. The original workbook URL remains the source key; these mirrors
+# are only used to create a local evidence trail for the displayed values.
+ALTERNATE_SOURCES = {
+    "https://press.police.ac.kr/pds/1476878914562.pdf": "https://r.jina.ai/http://press.police.ac.kr/pds/1476878914562.pdf",
+    "https://psa.gov.ph/content/foreign-citizens-country-2020-census-population-and-housing": "https://psa.gov.ph/system/files/phcd/1_PR%20on%20Citizenship.pdf",
+    "https://www.aph.gov.au/~/media/Committees/legcon_ctte/estimates/bud_1718/DIBP/QoNs/BE17171.pdf": "https://www.homeaffairs.gov.au/reports-and-pubs/Annualreports/dibp-annual-report-2015-16.pdf",
+    "https://sdmx.oecd.org/public/rest/data/OECD.ELS.IMD,DSD_MIG_F@DF_MIG_POPF,1.0/USA.W.A.B14._T._Z._Z.PS?startPeriod=2010&endPeriod=2022&format=jsondata&dimensionAtObservation=AllDimensions": "https://sdmx.oecd.org/public/rest/data/OECD.ELS.IMD,DSD_MIG_F@DF_MIG_POPF,1.0/USA.W.A.B14._T._Z._Z.PS?startPeriod=2010&endPeriod=2022&dimensionAtObservation=AllDimensions&format=csvfile",
+    "https://www.gov.il/BlobFolder/generalpage/foreign_workers_stats/he/zarim_2022_q1.pdf": "https://www.gov.il/BlobFolder/news/foreign_workers_report_q1_2022/he/zarim_2022_q1.pdf",
+    "https://www.cinformi.it/Comunicazione/Notizie/I-dati-del-Rapporto-ISMU-sulle-migrazioni-2020": "https://www.ismu.org/wp-content/uploads/2021/04/ISMU_XXVI-Italian-Report-on-migrations_2020.pdf",
+    "https://www.sem.admin.ch/dam/sem/de/data/internationales/illegale-migration/sans_papiers/ber-sanspapiers-2015-d.pdf": "https://www.sem.admin.ch/dam/sem/de/data/internationales/illegale-migration/sans_papiers/ber-sanspapiers-2015.pdf.download.pdf/ber-sanspapiers-2015.pdf",
+}
+EXTERNAL_MIRRORS = {
+    "https://psa.gov.ph/content/foreign-citizens-country-2020-census-population-and-housing": "https://psa.gov.ph/system/files/phcd/1_PR%20on%20Citizenship.pdf",
+    "https://www.aph.gov.au/~/media/Committees/legcon_ctte/estimates/bud_1718/DIBP/QoNs/BE17171.pdf": "https://www.homeaffairs.gov.au/reports-and-pubs/Annualreports/dibp-annual-report-2015-16.pdf",
+    "https://sdmx.oecd.org/public/rest/data/OECD.ELS.IMD,DSD_MIG_F@DF_MIG_POPF,1.0/USA.W.A.B14._T._Z._Z.PS?startPeriod=2010&endPeriod=2022&format=jsondata&dimensionAtObservation=AllDimensions": "https://sdmx.oecd.org/public/rest/data/OECD.ELS.IMD,DSD_MIG_F@DF_MIG_POPF,1.0/USA.W.A.B14._T._Z._Z.PS?startPeriod=2010&endPeriod=2022&dimensionAtObservation=AllDimensions&format=csvfile",
+    "https://www.gov.il/BlobFolder/generalpage/foreign_workers_stats/he/zarim_2022_q1.pdf": "https://www.gov.il/BlobFolder/news/foreign_workers_report_q1_2022/he/zarim_2022_q1.pdf",
+}
 
 
 def safe_value(value):
@@ -134,52 +164,137 @@ def source_file_prefix(source_id, url):
     return f"{source_id}_{host}_{base}_{digest}"
 
 
-def fetch_snapshot(source_id, url, target_dir, attempts=2):
-    prefix = source_file_prefix(source_id, url)
+def fetch_snapshot(source_id, url, target_dir, alternate_url=None, external_mirror=None, attempts=2):
+    candidates = [url]
+    if alternate_url and alternate_url != url:
+        candidates.append(alternate_url)
     last_error = ""
-    for attempt in range(attempts):
-        try:
-            request = Request(
-                url,
-                headers={
-                    "User-Agent": USER_AGENT,
-                    "Accept": "application/json, application/pdf, text/html, text/plain, */*",
-                    "Accept-Encoding": "identity",
-                },
-            )
-            with urlopen(request, timeout=45, context=SSL_CONTEXT) as response:
-                content = response.read()
-                status = getattr(response, "status", None) or response.getcode()
-                content_type = response.headers.get("Content-Type", "")
-                extension = url_extension(url, content_type, content)
-                path = target_dir / f"{prefix}{extension}"
-                path.write_bytes(content)
-                return {
-                    "source_id": source_id,
-                    "url": url,
-                    "retrieval_status": "retrieved",
-                    "http_status": status,
-                    "bytes": len(content),
-                    "content_type": content_type,
-                    "snapshot_path": path.as_posix(),
-                    "snapshot_sha256": hashlib.sha256(content).hexdigest(),
-                    "retrieved_at": TODAY,
-                    "tls_verification": "unverified_local_proxy",
-                    "error": "",
-                }
-        except HTTPError as error:
-            last_error = f"HTTP {error.code}: {error.reason}"
-            if error.code in {401, 403, 404, 410}:
-                break
-        except (URLError, TimeoutError, OSError, ValueError) as error:
-            last_error = f"{type(error).__name__}: {error}"
-        if attempt + 1 < attempts:
-            time.sleep(0.8)
-    error_path = target_dir / f"{prefix}.error.txt"
+    for candidate_index, candidate_url in enumerate(candidates):
+        prefix = source_file_prefix(source_id, candidate_url)
+        parsed = urlsplit(candidate_url)
+        referer = f"{parsed.scheme}://{parsed.netloc}/" if parsed.netloc else ""
+        cached_paths = sorted(
+            path
+            for path in target_dir.glob(f"{prefix}.*")
+            if path.is_file() and not path.name.endswith(".error.txt") and not path.name.endswith("_mirror.txt")
+        )
+        if cached_paths:
+            path = cached_paths[0]
+            content = path.read_bytes()
+            guessed_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            return {
+                "source_id": source_id,
+                "url": url,
+                "retrieval_status": "retrieved" if candidate_index == 0 else "retrieved_via_alternate",
+                "http_status": "cached",
+                "bytes": len(content),
+                "content_type": guessed_type,
+                "snapshot_path": path.as_posix(),
+                "snapshot_sha256": hashlib.sha256(content).hexdigest(),
+                "retrieved_at": TODAY,
+                "tls_verification": "cached_previous_build",
+                "snapshot_source_url": candidate_url,
+                "alternate_url": alternate_url or "",
+                "evidence_note": "Reused the existing local snapshot from an earlier build.",
+                "error": "",
+            }
+        for attempt in range(attempts):
+            try:
+                request = Request(
+                    candidate_url,
+                    headers={
+                        "User-Agent": USER_AGENT,
+                        "Accept": "application/json, application/pdf, text/html, text/plain, */*",
+                        "Accept-Encoding": "identity",
+                        "Accept-Language": "en-US,en;q=0.8",
+                        "Referer": referer,
+                    },
+                )
+                with urlopen(request, timeout=45, context=SSL_CONTEXT) as response:
+                    content = response.read()
+                    status = getattr(response, "status", None) or response.getcode()
+                    content_type = response.headers.get("Content-Type", "")
+                    extension = url_extension(candidate_url, content_type, content)
+                    path = target_dir / f"{prefix}{extension}"
+                    path.write_bytes(content)
+                    return {
+                        "source_id": source_id,
+                        "url": url,
+                        "retrieval_status": "retrieved" if candidate_index == 0 else "retrieved_via_alternate",
+                        "http_status": status,
+                        "bytes": len(content),
+                        "content_type": content_type,
+                        "snapshot_path": path.as_posix(),
+                        "snapshot_sha256": hashlib.sha256(content).hexdigest(),
+                        "retrieved_at": TODAY,
+                        "tls_verification": "unverified_local_proxy",
+                        "snapshot_source_url": candidate_url,
+                        "alternate_url": alternate_url or "",
+                        "evidence_note": "Direct source response captured locally." if candidate_index == 0 else "Local mirror response captured from the alternate URL listed in the source register.",
+                        "error": "",
+                    }
+            except HTTPError as error:
+                last_error = f"{candidate_url}: HTTP {error.code}: {error.reason}"
+                if error.code in {401, 403, 404, 410}:
+                    break
+            except (URLError, TimeoutError, OSError, ValueError) as error:
+                last_error = f"{candidate_url}: {type(error).__name__}: {error}"
+            if attempt + 1 < attempts:
+                time.sleep(0.8)
+
+    if external_mirror:
+        pointer_path = target_dir / f"{source_file_prefix(source_id, external_mirror)}_mirror.txt"
+        if pointer_path.exists():
+            pointer_bytes = pointer_path.read_bytes()
+            return {
+                "source_id": source_id,
+                "url": url,
+                "retrieval_status": "external_mirror",
+                "http_status": "cached",
+                "bytes": len(pointer_bytes),
+                "content_type": "text/plain",
+                "snapshot_path": pointer_path.as_posix(),
+                "snapshot_sha256": hashlib.sha256(pointer_bytes).hexdigest(),
+                "retrieved_at": TODAY,
+                "tls_verification": "cached_previous_build",
+                "snapshot_source_url": external_mirror,
+                "alternate_url": alternate_url or "",
+                "evidence_note": "Reused the existing local pointer to the external evidence mirror.",
+                "error": "",
+            }
+        pointer_path.write_text(
+            "External evidence mirror pointer\n"
+            f"Generated on: {TODAY}\n"
+            f"Original workbook URL: {url}\n"
+            f"Mirror URL: {external_mirror}\n"
+            "The local environment could not capture the mirror bytes; use the mirror URL for the source document.\n"
+            f"Local retrieval note: {last_error}\n",
+            encoding="utf-8",
+        )
+        pointer_bytes = pointer_path.read_bytes()
+        return {
+            "source_id": source_id,
+            "url": url,
+            "retrieval_status": "external_mirror",
+            "http_status": "",
+            "bytes": len(pointer_bytes),
+            "content_type": "text/plain",
+            "snapshot_path": pointer_path.as_posix(),
+            "snapshot_sha256": hashlib.sha256(pointer_bytes).hexdigest(),
+            "retrieved_at": TODAY,
+            "tls_verification": "unverified_local_proxy",
+            "snapshot_source_url": external_mirror,
+            "alternate_url": alternate_url or "",
+            "evidence_note": "Original source was blocked locally; the displayed value links to the listed external PDF mirror and the pointer is preserved locally.",
+            "error": last_error,
+        }
+
+    error_path = target_dir / f"{source_file_prefix(source_id, url)}.error.txt"
     error_path.write_text(
         f"Snapshot retrieval failed on {TODAY}\nURL: {url}\nError: {last_error}\n",
         encoding="utf-8",
     )
+    error_bytes = error_path.read_bytes()
     return {
         "source_id": source_id,
         "url": url,
@@ -188,9 +303,12 @@ def fetch_snapshot(source_id, url, target_dir, attempts=2):
         "bytes": 0,
         "content_type": "",
         "snapshot_path": error_path.as_posix(),
-        "snapshot_sha256": hashlib.sha256(error_path.read_bytes()).hexdigest(),
+        "snapshot_sha256": hashlib.sha256(error_bytes).hexdigest(),
         "retrieved_at": TODAY,
         "tls_verification": "unverified_local_proxy",
+        "snapshot_source_url": "",
+        "alternate_url": alternate_url or "",
+        "evidence_note": "No local response or external mirror was available.",
         "error": last_error,
     }
 
@@ -220,17 +338,42 @@ def format_cell(key, value):
     return format_number(value)
 
 
+def local_href(path, depth=0):
+    return ("../" * depth) + str(path).lstrip("./")
+
+
+def evidence_target(record, depth=0):
+    if not record:
+        return "", False, "R", "unmapped source"
+    status = record.get("retrieval_status", "")
+    if status in LOCAL_EVIDENCE_STATUSES and record.get("snapshot_path"):
+        quality = "A" if status == "retrieved" else "B"
+        label = "local snapshot" if status == "retrieved" else "local alternate mirror"
+        return local_href(record["snapshot_path"], depth), True, quality, label
+    if status == "external_mirror":
+        return record.get("snapshot_source_url") or record.get("url", ""), False, "C", "external PDF mirror"
+    if record.get("snapshot_path"):
+        return local_href(record["snapshot_path"], depth), True, "R", "local retrieval record"
+    return record.get("url", ""), False, "R", "original source URL"
+
+
 def link_for_source(url, source_lookup, depth=0, label=None):
     if not url:
         return "—"
     record = source_lookup.get(url)
     shown = esc(label or compact(url, 72))
-    if record and record.get("retrieval_status") == "retrieved":
-        href = ("../" * depth) + record["snapshot_path"]
-        return f'<a href="{esc(href)}" download>{shown} <span class="tag tag-ok">local snapshot</span></a>'
-    if record and record.get("retrieval_status") == "failed":
-        return f'<a href="{esc(url)}" target="_blank" rel="noreferrer">{shown}</a> <span class="tag tag-warn">not retrieved</span>'
-    return f'<a href="{esc(url)}" target="_blank" rel="noreferrer">{shown}</a>'
+    if not record:
+        return f'<a href="{esc(url)}" target="_blank" rel="noreferrer">{shown}</a>'
+    href, local, quality, evidence_label = evidence_target(record, depth)
+    if not href:
+        return f'<a href="{esc(url)}" target="_blank" rel="noreferrer">{shown}</a>'
+    if local:
+        return f'<a href="{esc(href)}" download>{shown} <span class="tag tag-ok">{esc(evidence_label)}</span></a>'
+    if record.get("retrieval_status") == "external_mirror":
+        pointer = local_href(record.get("snapshot_path", ""), depth) if record.get("snapshot_path") else ""
+        pointer_html = f' <a class="text-link" href="{esc(pointer)}" download>local pointer</a>' if pointer else ""
+        return f'<a href="{esc(href)}" target="_blank" rel="noreferrer">{shown} <span class="tag tag-warn">{esc(evidence_label)}</span></a>{pointer_html}'
+    return f'<a href="{esc(href)}" target="_blank" rel="noreferrer">{shown} <span class="tag tag-warn">{esc(evidence_label)}</span></a>'
 
 
 def common_page(title, active, body, depth=0):
@@ -261,7 +404,7 @@ def common_page(title, active, body, depth=0):
     <div class="shell header-inner">
       <a class="brand" href="{root}index.html">
         <span class="brand-mark">M</span>
-        <span><strong>Migration evidence</strong><small>independent archive · 17 Aug 2026</small></span>
+        <span><strong>Migration evidence</strong><small>independent archive · {esc(TODAY)}</small></span>
       </a>
       <nav class="nav">{nav}</nav>
     </div>
@@ -271,7 +414,7 @@ def common_page(title, active, body, depth=0):
   </main>
   <footer class="site-footer">
     <div class="shell footer-inner">
-      <span>Built independently from the user-provided workbook.</span>
+      <span>Built independently from the user-provided workbook. Co-work of <a href="https://raymond.cph.ntu.edu.tw/" target="_blank" rel="noreferrer">Prof. Raymond Kuo, National Taiwan University</a> and OpenAI GTP-5.6-luna.</span>
       <span><a href="{root}README.md">README</a> · <a href="{root}manifest.json">manifest</a></span>
     </div>
   </footer>
@@ -281,17 +424,125 @@ def common_page(title, active, body, depth=0):
 """
 
 
-def stat_card(value, label, detail=""):
-    return f'<div class="stat"><strong>{esc(value)}</strong><span>{esc(label)}</span>{f"<small>{esc(detail)}</small>" if detail else ""}</div>'
+def local_value(value, href=None, depth=0, download=True, title=""):
+    shown = format_number(value)
+    if not href:
+        return shown
+    target = href if href.startswith(("http://", "https://", "#")) else local_href(href, depth)
+    attrs = " download" if download and not target.startswith(("http://", "https://")) else ' target="_blank" rel="noreferrer"'
+    title_attr = f' title="{esc(title)}"' if title else ""
+    return f'<a class="stat-value-link" href="{esc(target)}"{attrs}{title_attr}>{shown}</a>'
 
 
-def render_country_page(output, country, rows, country_meta, coverage_meta, source_lookup, country_source_urls):
+def stat_card(value, label, detail="", href=None, depth=0, download=True):
+    value_html = local_value(value, href=href, depth=depth, download=download, title=f"Evidence for {label}")
+    return f'<div class="stat"><strong>{value_html}</strong><span>{esc(label)}</span>{f"<small>{esc(detail)}</small>" if detail else ""}</div>'
+
+
+def build_panel_evidence(panel, source_lookup):
+    evidence_rows = []
+    for row in panel:
+        iso3 = row.get("iso3") or ""
+        year = row.get("year")
+        for key, _ in PANEL_DISPLAY_COLUMNS:
+            value = row.get(key)
+            if value in (None, ""):
+                continue
+            cell_id = f"{iso3}:{year}:{key}"
+            if key == "year":
+                evidence_rows.append(
+                    {
+                        "cell_id": cell_id,
+                        "iso3": iso3,
+                        "country": row.get("country", ""),
+                        "year": year,
+                        "variable": key,
+                        "value": value,
+                        "source_id": "PANEL",
+                        "source_url": "",
+                        "snapshot_source_url": "",
+                        "retrieval_status": "local_data",
+                        "evidence_type": "panel_record",
+                        "quality_code": "P",
+                        "local_path": "data/panel_evidence.csv",
+                        "evidence_href": "data/panel_evidence.csv",
+                        "downloadable_local": True,
+                        "evidence_label": "local Panel evidence register",
+                        "evidence_note": "Year value comes from the copied Panel row; the evidence register is downloadable locally.",
+                    }
+                )
+                continue
+            source_field = PANEL_SOURCE_FIELDS.get(key)
+            source_url = row.get(source_field) if source_field else ""
+            record = source_lookup.get(source_url, {})
+            status = record.get("retrieval_status", "unmapped")
+            local_path = record.get("snapshot_path", "") if status in LOCAL_EVIDENCE_STATUSES or status == "external_mirror" else ""
+            is_external = status == "external_mirror"
+            if is_external:
+                evidence_href = record.get("snapshot_source_url") or source_url
+            elif local_path:
+                evidence_href = local_path
+            else:
+                evidence_href = source_url
+            quality_code = {"retrieved": "A", "retrieved_via_alternate": "B", "external_mirror": "C"}.get(status, "R")
+            evidence_type = {
+                "retrieved": "local_snapshot",
+                "retrieved_via_alternate": "local_alternate_mirror",
+                "external_mirror": "external_mirror",
+            }.get(status, "retrieval_record")
+            evidence_rows.append(
+                {
+                    "cell_id": cell_id,
+                    "iso3": iso3,
+                    "country": row.get("country", ""),
+                    "year": year,
+                    "variable": key,
+                    "value": value,
+                    "source_id": record.get("source_id", ""),
+                    "source_url": source_url,
+                    "snapshot_source_url": record.get("snapshot_source_url", ""),
+                    "retrieval_status": status,
+                    "evidence_type": evidence_type,
+                    "quality_code": quality_code,
+                    "local_path": local_path,
+                    "evidence_href": evidence_href,
+                    "downloadable_local": bool(local_path) and not is_external,
+                    "evidence_label": record.get("evidence_note") or evidence_type.replace("_", " "),
+                    "evidence_note": record.get("evidence_note", ""),
+                }
+            )
+    return evidence_rows
+
+
+def panel_evidence_cell(key, value, row, evidence_lookup, depth=1):
+    shown = format_cell(key, value)
+    if value in (None, ""):
+        return shown
+    cell_id = f"{row.get('iso3') or ''}:{row.get('year')}:{key}"
+    evidence = evidence_lookup.get(cell_id)
+    if not evidence:
+        return shown
+    if evidence.get("downloadable_local"):
+        href = local_href(evidence.get("local_path", ""), depth)
+        attrs = " download"
+    else:
+        href = evidence.get("evidence_href", "")
+        attrs = ' target="_blank" rel="noreferrer"'
+    if not href:
+        return shown
+    quality = evidence.get("quality_code", "R")
+    tag_class = "tag-ok" if quality in {"A", "B", "P"} else "tag-warn"
+    title = f"{evidence.get('source_id') or 'local'} · {evidence.get('evidence_type', 'evidence').replace('_', ' ')}"
+    return f'<a class="evidence-link" href="{esc(href)}"{attrs} title="{esc(title)}"><span>{shown}</span> <span class="tag {tag_class}">{esc(quality)}</span></a>'
+
+
+def render_country_page(output, country, rows, country_meta, coverage_meta, source_lookup, country_source_urls, evidence_lookup):
     iso3 = country["iso3"]
     country_name = country["country"]
     cards = [
-        stat_card(country.get("in_both_waves"), "in both ISSP waves"),
-        stat_card(country.get("iso3"), "ISO3"),
-        stat_card(country.get("m49_code"), "M49 code"),
+        stat_card(country.get("in_both_waves"), "in both ISSP waves", href="data/countries.csv", depth=1),
+        stat_card(country.get("iso3"), "ISO3", href="data/countries.csv", depth=1),
+        stat_card(country.get("m49_code"), "M49 code", href="data/countries.csv", depth=1),
     ]
     headers = "".join(f"<th>{esc(label)}</th>" for _, label in PANEL_DISPLAY_COLUMNS)
     table_rows = []
@@ -299,7 +550,7 @@ def render_country_page(output, country, rows, country_meta, coverage_meta, sour
         cells = []
         for key, _ in PANEL_DISPLAY_COLUMNS:
             classes = "numeric" if key != "year" else ""
-            cells.append(f'<td class="{classes}">{format_cell(key, row.get(key))}</td>')
+            cells.append(f'<td class="{classes}">{panel_evidence_cell(key, row.get(key), row, evidence_lookup, depth=1)}</td>')
         table_rows.append("<tr>" + "".join(cells) + "</tr>")
     source_cards = []
     for url in sorted(country_source_urls):
@@ -327,13 +578,13 @@ def render_country_page(output, country, rows, country_meta, coverage_meta, sour
     <section class="panel">
       <div class="panel-head"><div><p class="eyebrow">Coverage</p><h2>Available observations</h2></div></div>
       <div class="coverage-grid">
-        {''.join(f'<div><span>{esc(key.replace("_", " "))}</span><strong>{esc(value)}</strong></div>' for key, value in coverage_meta.items() if key not in {"country", "iso3"})}
+        {''.join(f'<div><span>{esc(key.replace("_", " "))}</span><strong>{local_value(value, href="data/coverage.csv", depth=1, title="Coverage evidence in the local workbook export")}</strong></div>' for key, value in coverage_meta.items() if key not in {"country", "iso3"})}
       </div>
     </section>
     <section class="panel">
-      <div class="panel-head"><div><p class="eyebrow">Panel extract</p><h2>2010–2022 observations</h2></div><a class="text-link" href="../data/panel.csv" download>Download full CSV</a></div>
+      <div class="panel-head"><div><p class="eyebrow">Panel data</p><h2>2010–2022 observations</h2></div><a class="text-link" href="../data/panel.csv" download>Download full CSV</a></div>
       <div class="table-wrap"><table><thead><tr>{headers}</tr></thead><tbody>{''.join(table_rows)}</tbody></table></div>
-      <p class="fine-print">Percentages are stored as fractions in the workbook and displayed here as percentages. A blank is an unavailable observation, not a zero.</p>
+      <p class="fine-print"><span class="tag tag-ok">A</span> direct local snapshot · <span class="tag tag-ok">B</span> local alternate mirror · <span class="tag tag-warn">C</span> external PDF mirror · <span class="tag tag-warn">R</span> retrieval record. Every displayed number is linked; click the number or quality badge. Percentages are stored as fractions in the workbook and displayed here as percentages. A blank is an unavailable observation, not a zero.</p>
     </section>
     <section class="panel">
       <div class="panel-head"><div><p class="eyebrow">Source trail</p><h2>Local snapshots referenced by this country</h2></div></div>
@@ -469,13 +720,23 @@ def main():
                     "snapshot_sha256": "",
                     "retrieved_at": "",
                     "tls_verification": "not_run",
+                    "snapshot_source_url": "",
+                    "alternate_url": ALTERNATE_SOURCES.get(record["url"], ""),
+                    "evidence_note": "Downloads were skipped.",
                     "error": "Downloads were skipped.",
                 }
             )
     else:
         with ThreadPoolExecutor(max_workers=max(1, args.workers)) as executor:
             futures = {
-                executor.submit(fetch_snapshot, record["source_id"], url, snapshot_dir): url
+                executor.submit(
+                    fetch_snapshot,
+                    record["source_id"],
+                    url,
+                    snapshot_dir,
+                    alternate_url=ALTERNATE_SOURCES.get(url),
+                    external_mirror=EXTERNAL_MIRRORS.get(url),
+                ): url
                 for url, record in source_lookup.items()
             }
             for future in as_completed(futures):
@@ -506,12 +767,39 @@ def main():
                 "snapshot_sha256": record.get("snapshot_sha256", ""),
                 "retrieved_at": record.get("retrieved_at", ""),
                 "tls_verification": record.get("tls_verification", ""),
+                "snapshot_source_url": record.get("snapshot_source_url", ""),
+                "alternate_url": record.get("alternate_url", ""),
+                "evidence_note": record.get("evidence_note", ""),
                 "error": record.get("error", ""),
                 "source_url": url,
             }
         )
     write_csv(output / "data" / "source_register.csv", source_register)
     write_json(output / "data" / "source_register.json", source_register)
+
+    panel_evidence_rows = build_panel_evidence(panel, source_lookup)
+    panel_evidence_fields = [
+        "cell_id",
+        "iso3",
+        "country",
+        "year",
+        "variable",
+        "value",
+        "source_id",
+        "source_url",
+        "snapshot_source_url",
+        "retrieval_status",
+        "evidence_type",
+        "quality_code",
+        "local_path",
+        "evidence_href",
+        "downloadable_local",
+        "evidence_label",
+        "evidence_note",
+    ]
+    write_csv(output / "data" / "panel_evidence.csv", panel_evidence_rows, fieldnames=panel_evidence_fields)
+    write_json(output / "data" / "panel_evidence.json", panel_evidence_rows)
+    panel_evidence_lookup = {row["cell_id"]: row for row in panel_evidence_rows}
 
     by_iso = {row.get("iso3"): row for row in countries if row.get("iso3")}
     coverage_by_iso = {row.get("iso3"): row for row in coverage if row.get("iso3")}
@@ -536,15 +824,22 @@ def main():
             coverage_by_iso.get(iso3, {}),
             source_lookup,
             country_source_urls[iso3],
+            panel_evidence_lookup,
         )
 
-    retrieved = sum(1 for item in snapshot_results if item["retrieval_status"] == "retrieved")
+    retrieved = sum(1 for item in snapshot_results if item["retrieval_status"] in LOCAL_EVIDENCE_STATUSES)
+    direct_retrieved = sum(1 for item in snapshot_results if item["retrieval_status"] == "retrieved")
+    alternate_retrieved = sum(1 for item in snapshot_results if item["retrieval_status"] == "retrieved_via_alternate")
+    external_mirrors = sum(1 for item in snapshot_results if item["retrieval_status"] == "external_mirror")
     failed = sum(1 for item in snapshot_results if item["retrieval_status"] == "failed")
     source_stats = {
         "unique_urls": len(source_urls),
         "retrieved": retrieved,
+        "direct_retrieved": direct_retrieved,
+        "alternate_retrieved": alternate_retrieved,
+        "external_mirrors": external_mirrors,
         "failed": failed,
-        "not_run": len(source_urls) - retrieved - failed,
+        "not_run": len(source_urls) - retrieved - external_mirrors - failed,
     }
     variable_counts = {
         variable: sum(1 for row in panel if row.get(variable) not in (None, ""))
@@ -557,10 +852,12 @@ def main():
         "countries": len(by_iso),
         "years": sorted({row.get("year") for row in panel if row.get("year") is not None}),
         "panel_rows": len(panel),
+        "panel_evidence_rows": len(panel_evidence_rows),
         "variable_nonmissing_counts": variable_counts,
         "sources": source_stats,
         "tls_note": "Python HTTPS retrievals used an unverified context because the local proxy CA was unavailable to the Python CA bundle; this is recorded in source_register.csv.",
         "independence_note": "This site was generated in a separate folder from the source workbook. It does not read or copy the Claude-generated website directory.",
+        "cowork_note": "Co-work of Prof. Raymond Kuo, National Taiwan University, and OpenAI GTP-5.6-luna.",
     }
     write_json(output / "build_summary.json", build_summary)
 
@@ -576,10 +873,10 @@ def main():
             "<tr>"
             f'<td><a href="countries/{esc(row.get("iso3"))}.html">{esc(row.get("country"))}</a></td>'
             f'<td><code>{esc(row.get("iso3"))}</code></td>'
-            f'<td>{format_cell("population", row.get("coverage_population"))}</td>'
-            f'<td>{format_cell("foreign_born", row.get("coverage_foreign_born"))}</td>'
-            f'<td>{format_cell("foreign_nationals", row.get("coverage_foreign_nationals"))}</td>'
-            f'<td>{format_cell("irregular_proxy_detections", row.get("coverage_irregular_proxy_detections"))}</td>'
+            f'<td>{local_value(row.get("coverage_population"), href="data/coverage.csv", title="Coverage evidence in the local workbook export")}</td>'
+            f'<td>{local_value(row.get("coverage_foreign_born"), href="data/coverage.csv", title="Coverage evidence in the local workbook export")}</td>'
+            f'<td>{local_value(row.get("coverage_foreign_nationals"), href="data/coverage.csv", title="Coverage evidence in the local workbook export")}</td>'
+            f'<td>{local_value(row.get("coverage_irregular_proxy_detections"), href="data/coverage.csv", title="Coverage evidence in the local workbook export")}</td>'
             "</tr>"
         )
     index_body = f"""
@@ -596,14 +893,14 @@ def main():
       <div class="hero-note">
         <span class="note-label">Independent build</span>
         <strong>Separate folder, separate repository</strong>
-        <p>This implementation does not copy the existing Claude-generated website. Its source input is the workbook at the original outputs folder.</p>
+        <p>This implementation does not copy the existing Claude-generated website. Its source input is the workbook at the original outputs folder. Co-work of <a href="https://raymond.cph.ntu.edu.tw/" target="_blank" rel="noreferrer">Prof. Raymond Kuo, National Taiwan University</a> and OpenAI GTP-5.6-luna.</p>
       </div>
     </section>
     <div class="stat-grid">
-      {stat_card(len(by_iso), "countries", "selected panel")}
-      {stat_card(len(panel), "country-year rows", "40 × 13")}
-      {stat_card(source_stats["unique_urls"], "source URLs", f'{retrieved} local snapshots')}
-      {stat_card(sum(1 for row in panel for value in row.values() if value not in (None, "")), "populated cells", "Panel sheet")}
+      {stat_card(len(by_iso), "countries", "selected panel", href="data/countries.csv")}
+      {stat_card(len(panel), "country-year rows", "40 × 13", href="data/panel.csv")}
+      {stat_card(source_stats["unique_urls"], "source URLs", f'{retrieved} local snapshots + {external_mirrors} external mirrors', href="data/source_register.csv")}
+      {stat_card(sum(1 for row in panel for value in row.values() if value not in (None, "")), "populated cells", "Panel sheet", href="data/panel.csv")}
     </div>
     <section class="split">
       <div class="panel">
@@ -615,6 +912,7 @@ def main():
         <div class="panel-head"><div><p class="eyebrow">Downloadable record</p><h2>What is preserved</h2></div></div>
         <ul class="clean-list">
           <li><a href="data/panel.csv" download>Panel CSV</a> — one row per country-year.</li>
+          <li><a href="data/panel_evidence.csv" download>Panel evidence CSV</a> — one clickable evidence record per displayed value.</li>
           <li><a href="data/source_register.csv" download>Source register CSV</a> — local snapshot mapping.</li>
           <li><a href="data/source_audit.csv" download>Workbook source audit</a> — original audit table.</li>
           <li><a href="manifest.json" download>Site manifest</a> — hashes and build counts.</li>
@@ -644,6 +942,8 @@ def main():
         ("Requested final workbook", f"data/{source_workbook.name}", "Original workbook supplied for this website.", source_workbook.stat().st_size),
         ("Panel CSV", "data/panel.csv", "520 country-year rows from the Panel sheet.", (output / "data/panel.csv").stat().st_size),
         ("Panel JSON", "data/panel.json", "Machine-readable Panel rows.", (output / "data/panel.json").stat().st_size),
+        ("Panel evidence CSV", "data/panel_evidence.csv", "One local or mirrored evidence link for every displayed Panel value.", (output / "data/panel_evidence.csv").stat().st_size),
+        ("Panel evidence JSON", "data/panel_evidence.json", "Machine-readable Panel evidence mapping.", (output / "data/panel_evidence.json").stat().st_size),
         ("Source register", "data/source_register.csv", "One row per distinct URL with independent retrieval status.", (output / "data/source_register.csv").stat().st_size),
         ("Source audit", "data/source_audit.csv", "Source Audit sheet from the input workbook.", (output / "data/source_audit.csv").stat().st_size),
         ("Irregular estimates", "data/irregular_estimates.csv", "Competing irregular/unauthorized estimates kept side by side.", (output / "data/irregular_estimates.csv").stat().st_size),
@@ -661,16 +961,20 @@ def main():
     for record in source_register:
         snapshot_link = "—"
         if record["snapshot_path"]:
-            if record["retrieval_status"] == "retrieved":
+            if record["retrieval_status"] in LOCAL_EVIDENCE_STATUSES:
                 snapshot_link = f'<a href="{esc(record["snapshot_path"])}" download>download snapshot</a>'
+            elif record["retrieval_status"] == "external_mirror":
+                mirror = record.get("snapshot_source_url") or record.get("source_url")
+                snapshot_link = f'<a href="{esc(mirror)}" target="_blank" rel="noreferrer">open external mirror</a> · <a href="{esc(record["snapshot_path"])}" download>local pointer</a>'
             elif record["retrieval_status"] == "failed":
                 snapshot_link = f'<a href="{esc(record["snapshot_path"])}" download>retrieval record</a>'
+        status_class = "tag-ok" if record["retrieval_status"] in LOCAL_EVIDENCE_STATUSES else "tag-warn"
         source_rows.append(
-            f'<tr><td><code>{esc(record["source_id"])}</code></td><td>{esc(record["source_name"])}</td><td>{esc(record["countries"])}</td><td>{esc(record["topics"])}</td><td><span class="tag {"tag-ok" if record["retrieval_status"] == "retrieved" else "tag-warn"}">{esc(record["retrieval_status"])}</span></td><td>{snapshot_link}</td><td class="url-cell"><a href="{esc(record["source_url"])}" target="_blank" rel="noreferrer">{esc(compact(record["source_url"], 90))}</a></td></tr>'
+            f'<tr><td><code>{esc(record["source_id"])}</code></td><td>{esc(record["source_name"])}</td><td>{esc(record["countries"])}</td><td>{esc(record["topics"])}</td><td><span class="tag {status_class}">{esc(record["retrieval_status"])}</span></td><td>{snapshot_link}</td><td class="url-cell"><a href="{esc(record["source_url"])}" target="_blank" rel="noreferrer">{esc(compact(record["source_url"], 90))}</a></td></tr>'
         )
     sources_body = f"""
-    <section class="page-head"><div><p class="eyebrow">Provenance · {len(source_register)} distinct URLs</p><h1>Source snapshots</h1><p class="lede">The build independently requested each distinct URL found in the workbook. Retrieved API, HTML, CSV, XML, text, and PDF responses are stored locally with hashes; failed requests retain a retrieval record and the original URL.</p></div><a class="button ghost" href="data/source_register.csv" download>Download register</a></section>
-    <div class="stat-grid">{stat_card(retrieved, "retrieved locally", "independent requests")}{stat_card(failed, "not retrieved", "original URL retained")}{stat_card(len(source_register), "distinct URLs", "deduplicated")}</div>
+    <section class="page-head"><div><p class="eyebrow">Provenance · {len(source_register)} distinct URLs</p><h1>Source snapshots</h1><p class="lede">The build independently requested each distinct URL found in the workbook. Retrieved API, HTML, CSV, XML, text, and PDF responses are stored locally with hashes; external mirrors retain a local pointer and a direct mirror link; failed requests retain a retrieval record and the original URL.</p></div><a class="button ghost" href="data/source_register.csv" download>Download register</a></section>
+    <div class="stat-grid">{stat_card(retrieved, "retrieved locally", "independent requests", href="data/source_register.csv")}{stat_card(external_mirrors, "external mirrors", "direct mirror links", href="data/source_register.csv")}{stat_card(failed, "not retrieved", "original URL retained", href="data/source_register.csv")}{stat_card(len(source_register), "distinct URLs", "deduplicated", href="data/source_register.csv")}</div>
     <section class="panel"><div class="toolbar"><label for="source-filter">Filter sources</label><input id="source-filter" data-filter-input="source-table" type="search" placeholder="ID, country, topic, or host"></div><div class="table-wrap"><table id="source-table" data-filter-table><thead><tr><th>ID</th><th>Source</th><th>Country</th><th>Topic</th><th>Status</th><th>Local file</th><th>Original URL</th></tr></thead><tbody>{''.join(source_rows)}</tbody></table></div></section>
     """
     (output / "sources.html").write_text(common_page("Sources", "sources", sources_body), encoding="utf-8")
@@ -680,23 +984,24 @@ def main():
     <section class="prose-grid">
       <article class="panel"><p class="eyebrow">Input</p><h2>One workbook</h2><p>The build reads the user-provided workbook migration_population_panel_40countries_2010-2022_final.xlsx from the original outputs folder. It reads the Panel, Codebook, Countries, Coverage, Key years, irregular estimates, long observations, and Source Audit sheets.</p></article>
       <article class="panel"><p class="eyebrow">Output</p><h2>Static, reviewable files</h2><p>Country pages, CSV/JSON exports, the source register, local snapshots, and a manifest are written into this repository. No database or runtime API is required to browse the site.</p></article>
-      <article class="panel"><p class="eyebrow">Snapshots</p><h2>What “local” means</h2><p>For each distinct source URL, the build makes an independent HTTP request and stores the response when available. PDFs remain PDF files; JSON/CSV/XML/HTML responses retain their response bytes. HTTP failures are not silently replaced: the original URL and a local error record remain visible.</p></article>
+      <article class="panel"><p class="eyebrow">Snapshots</p><h2>What “local” means</h2><p>For each distinct source URL, the build makes an independent HTTP request and stores the response when available. PDFs remain PDF files; JSON/CSV/XML/HTML responses retain their response bytes. When a host blocks local capture, the source register keeps a local pointer and the displayed Panel value links to the listed external PDF mirror. Each nonblank value in the Panel data table has a clickable evidence link.</p></article>
       <article class="panel"><p class="eyebrow">Concepts</p><h2>Do not pool unlike measures</h2><p>Population is a denominator. Foreign-born is place of birth. Foreign nationals is citizenship. Irregular stock, overstayer proxies, and enforcement detections differ in concept and reference date; this site preserves them as separate fields.</p></article>
     </section>
-    <section class="panel"><div class="panel-head"><div><p class="eyebrow">Reproducibility</p><h2>Build command</h2></div></div><pre><code>python scripts/build_site.py --workbook &lt;path-to-workbook&gt; --output . --workers 8</code></pre><p class="fine-print">Run from this repository. The script never reads the prior Claude-generated website directory.</p></section>
+    <section class="panel"><div class="panel-head"><div><p class="eyebrow">Reproducibility</p><h2>Build command</h2></div></div><pre><code>python scripts/build_site.py --workbook &lt;path-to-workbook&gt; --output . --workers 8</code></pre><p class="fine-print">Run from this repository. The script never reads the prior Claude-generated website directory. Co-work of Prof. Raymond Kuo, National Taiwan University, and OpenAI GTP-5.6-luna.</p></section>
     """
     (output / "methods.html").write_text(common_page("Methods", "methods", methods_body), encoding="utf-8")
 
     checks = [
-        ("Panel rows", len(panel), "Expected 40 countries × 13 years"),
-        ("Country pages", len(panel_by_iso), "One generated page per ISO3"),
-        ("Distinct source URLs", len(source_urls), "Deduplicated workbook URLs"),
-        ("Local snapshots", retrieved, "Independent HTTP retrievals"),
-        ("Failed retrievals", failed, "Retained with original URL and error record"),
+        ("Panel rows", local_value(len(panel), href="data/panel.csv"), "Expected 40 countries × 13 years"),
+        ("Panel evidence cells", local_value(len(panel_evidence_rows), href="data/panel_evidence.csv"), "Every nonblank displayed Panel value"),
+        ("Country pages", local_value(len(panel_by_iso), href="countries.html"), "One generated page per ISO3"),
+        ("Distinct source URLs", local_value(len(source_urls), href="data/source_register.csv"), "Deduplicated workbook URLs"),
+        ("Local snapshots", local_value(retrieved, href="data/source_register.csv"), "Independent HTTP retrievals"),
+        ("Failed retrievals", local_value(failed, href="data/source_register.csv"), "Retained with original URL and error record"),
     ]
     checks_body = f"""
     <section class="page-head"><div><p class="eyebrow">Build verification</p><h1>Checks</h1><p class="lede">These checks validate the site build and file topology. They do not replace substantive source verification.</p></div><a class="button ghost" href="manifest.json" download>Download manifest</a></section>
-    <section class="panel"><div class="table-wrap"><table><thead><tr><th>Check</th><th>Result</th><th>Meaning</th></tr></thead><tbody>{''.join(f'<tr><td>{esc(label)}</td><td><strong>{esc(value)}</strong></td><td>{esc(detail)}</td></tr>' for label, value, detail in checks)}</tbody></table></div></section>
+    <section class="panel"><div class="table-wrap"><table><thead><tr><th>Check</th><th>Result</th><th>Meaning</th></tr></thead><tbody>{''.join(f'<tr><td>{esc(label)}</td><td><strong>{value}</strong></td><td>{esc(detail)}</td></tr>' for label, value, detail in checks)}</tbody></table></div></section>
     <section class="panel"><div class="panel-head"><div><p class="eyebrow">Interpretation</p><h2>Review with the workbook notes</h2></div></div><p>The workbook's own Verification and Final Summary sheets are preserved inside the downloadable workbook. This independent site adds a separate topology check, data exports, and independently fetched source snapshots; it does not rewrite the workbook's substantive judgments.</p></section>
     """
     (output / "verification.html").write_text(common_page("Checks", "verification", checks_body), encoding="utf-8")
@@ -727,7 +1032,7 @@ The website lives in its own folder:
 
 openai-work/migration-healthcare-evidence-site
 
-It does not read or copy the prior Claude-generated website directory. The build script independently reads the workbook and independently requests the distinct source URLs recorded in the workbook's Source Audit and data sheets. Retrieved response bytes are stored under sources/; failed requests retain a local error record and the original URL.
+It does not read or copy the prior Claude-generated website directory. The build script independently reads the workbook and independently requests the distinct source URLs recorded in the workbook's Source Audit and data sheets. Retrieved response bytes are stored under sources/; blocked mirrors retain a local pointer and a direct mirror URL. The Panel evidence CSV/JSON gives every displayed nonblank Panel value a clickable evidence target.
 
 The local Python environment uses a proxy whose CA certificate is unavailable to Python's CA bundle. For this snapshot pass only, HTTPS retrieval uses an unverified TLS context; this limitation is recorded in data/source_register.csv and build_summary.json. The original URL, response bytes, and SHA-256 are preserved.
 
@@ -740,6 +1045,10 @@ After GitHub Pages is enabled, the site is available at the repository's Pages U
     python scripts/build_site.py --workbook <path-to-workbook> --output . --workers 8
 
 The output manifest is manifest.json; SHA-256 checksums are in SHA256SUMS.txt.
+
+## Co-work note
+
+This website is the co-work of Prof. Raymond Kuo at National Taiwan University (https://raymond.cph.ntu.edu.tw/) and OpenAI GTP-5.6-luna.
 """,
         encoding="utf-8",
     )
@@ -778,7 +1087,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-          url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -819,9 +1128,11 @@ jobs:
             "countries": len(by_iso),
             "country_pages": len(panel_by_iso),
             "panel_rows": len(panel),
+            "panel_evidence_rows": len(panel_evidence_rows),
             "years": build_summary["years"],
             "source_urls": len(source_urls),
             "retrieved_snapshots": retrieved,
+            "external_mirrors": external_mirrors,
             "failed_retrievals": failed,
         },
         "files": all_files,
@@ -832,7 +1143,7 @@ jobs:
             if path.is_file() and "__pycache__" not in path.parts and path.name != "SHA256SUMS.txt":
                 relative = path.relative_to(output).as_posix()
                 handle.write(f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {relative}\n")
-    print(json.dumps({"output": str(output), "countries": len(by_iso), "panel_rows": len(panel), "source_urls": len(source_urls), "retrieved": retrieved, "failed": failed}, ensure_ascii=False))
+    print(json.dumps({"output": str(output), "countries": len(by_iso), "panel_rows": len(panel), "panel_evidence_rows": len(panel_evidence_rows), "source_urls": len(source_urls), "retrieved": retrieved, "external_mirrors": external_mirrors, "failed": failed}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
